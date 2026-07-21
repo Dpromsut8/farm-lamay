@@ -1,0 +1,186 @@
+body { 
+    background: #0f172a; 
+    color: #e2e8f0; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    margin: 0; 
+    padding: 0; 
+    user-select: none;
+}
+
+.page { width: 100%; min-height: 100vh; }
+
+.login-container { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    min-height: 100vh; 
+}
+
+.input-card { display: flex; flex-direction: column; gap: 10px; }
+
+input, select { 
+    width: 100%; 
+    padding: 12px; 
+    box-sizing: border-box; 
+    background: #334155; 
+    border: 1px solid #475569; 
+    color: white; 
+    border-radius: 8px; 
+    font-size: 14px; 
+}
+
+input:focus, select:focus { outline: none; border-color: #60a5fa; }
+
+button { 
+    background: #3b82f6; 
+    color: white; 
+    border: none; 
+    padding: 10px 15px; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    transition: 0.2s; 
+    font-size: 14px; 
+}
+
+button:hover { background: #2563eb; }
+button:active { transform: scale(0.98); }
+.danger-btn { background: #ef4444 !important; }
+
+/* ระบบ Social Login */
+.divider { display: flex; align-items: center; text-align: center; color: #64748b; font-size: 12px; margin: 15px 0; }
+.divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #334155; }
+.divider span { padding: 0 10px; }
+
+.password-wrapper { position: relative; width: 100%; }
+.password-wrapper input { padding-right: 45px !important; }
+
+.fingerprint-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 22px;
+    cursor: pointer;
+    opacity: 0.65;
+    transition: all 0.2s ease-in-out;
+}
+
+.fingerprint-icon:hover { opacity: 1; transform: translateY(-50%) scale(1.2); }
+
+.social-login-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 5px; }
+
+.social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    border-radius: 10px;
+    border: 1px solid #334155;
+    cursor: pointer;
+    transition: transform 0.2s;
+    padding: 0;
+}
+
+.social-btn:hover { transform: translateY(-2px); }
+.line-btn { background: #06C755 !important; }
+.fb-btn { background: #1877F2 !important; }
+.google-btn { background: #ffffff !important; border-color: #cbd5e1; }
+
+/* โปรไฟล์ & Header */
+.profile-upload-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; gap: 10px; }
+.avatar-img-lg { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #60a5fa; }
+.avatar-img-sm { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #60a5fa; }
+.user-header-info { display: flex; align-items: center; gap: 10px; }
+.game-header { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 10px 20px; border-bottom: 2px solid #334155; }
+.game-header h1 { margin: 0; font-size: 18px; }
+.game-header p { margin: 0; font-size: 12px; }
+
+/* Layout แดชบอร์ด */
+.dashboard-grid { display: flex; flex-wrap: wrap; gap: 20px; padding: 20px; }
+.menu-panel, .account-panel { background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; flex: 1; min-width: 300px; }
+
+.group-title { margin: 15px 0 8px 0; color: #60a5fa; border-bottom: 1px solid #334155; padding-bottom: 4px; }
+.btn-group { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-bottom: 15px; }
+.btn-group button { background: #334155; border: 1px solid #475569; padding: 12px 8px; font-weight: 500; }
+
+/* สไตล์กล่องความรู้ (Knowledge Box) */
+.knowledge-card {
+    background: #1e293b;
+    border: 1.5px solid #3b82f6;
+    border-radius: 12px;
+    padding: 12px 15px;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.knowledge-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #334155;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+}
+
+.knowledge-header h4 {
+    margin: 0;
+    color: #60a5fa;
+    font-size: 15px;
+}
+
+.knowledge-card p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #cbd5e1;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ตารางประวัติ */
+.history-table { width: 100%; border-collapse: collapse; font-size: 13px; background: #2d3748; border-radius: 8px; overflow: hidden; }
+.history-table td, .history-table th { border-bottom: 1px solid #334155; padding: 10px 6px; text-align: center; }
+.history-table tr:hover { background: #334155; }
+
+/* หน้าต่าง Modal */
+.modal-overlay { 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 9999; 
+}
+.modal-content { background: #1e293b; border-radius: 12px; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+.modal-header { padding: 15px; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
+.modal-header h3 { margin: 0; color: #60a5fa; }
+.close-icon-btn { background: transparent !important; color: white !important; font-size: 18px; padding: 0 !important; }
+
+.note-input { background: #0f172a; border: 1px solid #475569; color: white; width: 95%; padding: 6px; font-size: 11px; border-radius: 4px; }
+
+.form-row-compact { display: flex; gap: 6px; width: 100%; }
+.form-row-compact input, .form-row-compact select { padding: 10px 6px !important; font-size: 13px !important; }
+
+select:invalid { color: #94a3b8 !important; }
+select:valid { color: #ffffff !important; }
+select option { background-color: #1e293b; color: #ffffff; }
+
+#expenseEntryArea label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+#expenseEntryArea input[type="number"] {
+    background: #1e293b;
+    border: 1px solid #475569;
+    color: #f8fafc;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
+
+#expenseEntryArea input[type="number"]:focus {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+}
