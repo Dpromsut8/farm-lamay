@@ -247,6 +247,28 @@
         </div>
     </div>
 
+    <!-- 1. ดึง Firebase SDK (App + Realtime Database) -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+<!-- 2. ตั้งค่าการเชื่อมต่อฐานข้อมูล farm-lamay -->
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDpdTlIf2IHJWDAVlWRQvY2zNlvsewM0eQ",
+    authDomain: "farm-lamay.firebaseapp.com",
+    databaseURL: "https://farm-lamay-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "farm-lamay",
+    storageBucket: "farm-lamay.firebasestorage.app",
+    messagingSenderId: "699936204834",
+    appId: "1:699936204834:web:bc80527271cdd76668027b",
+    measurementId: "G-MNH5VLH78R"
+  };
+
+  // เชื่อมต่อฐานข้อมูล
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+</script>
+    
     <!-- ไฟล์ Script หลัก -->
     <script src="script.js"></script>
 </body>
