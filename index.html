@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
     <title>ละม้ายฟาร์ม - จัดการผลผลิต</title>
-    <!-- แก้ไข Path ไฟล์ให้ถูกต้องตามโครงสร้าง GitHub -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <!-- ========================================== -->
     <!-- 1. หน้าเข้าสู่ระบบ (Login Page) -->
+    <!-- ========================================== -->
     <div id="login-page" class="page">
         <div class="login-container">
             <h2>🔐 เข้าสู่ระบบ</h2>
@@ -45,7 +46,9 @@
         </div>
     </div>
 
+    <!-- ========================================== -->
     <!-- 2. หน้าลงทะเบียนผู้ใช้ใหม่ (Register Page) -->
+    <!-- ========================================== -->
     <div id="register-page" class="page" style="display:none;">
         <div class="login-container" style="padding: 20px 0;">
             <h2>📝 ลงทะเบียนสมาชิกใหม่</h2>
@@ -83,7 +86,9 @@
         </div>
     </div>
 
+    <!-- ========================================== -->
     <!-- 3. หน้าใช้งานหลัก (Main App Page) -->
+    <!-- ========================================== -->
     <div id="app-page" class="page" style="display:none;">
         <header class="game-header">
             <div class="user-header-info">
@@ -100,317 +105,14 @@
         </header>
 
         <main class="dashboard-grid">
-            <section class="menu-panel">
-                <input type="text" id="searchItem" placeholder="🔍 ค้นหารายการ..." oninput="filterButtons(this.value)" class="form-input" style="margin-bottom: 20px; width: 100%;">
-                
-                <div id="groups-container"></div>
-                
-                <div class="editor-box" style="margin-top: 20px;">
-                    <h4 style="margin-top: 0; color: #60a5fa;">⚙️ จัดการรายการสินค้าใหม่</h4>
-                    <div class="input-card">
-                        <input type="text" id="newItemName" placeholder="ชื่อรายการ (พิมพ์เพื่อดึงราคาตลาด)..." class="form-input" oninput="autoSuggestMarketPrice()">
-                        
-                        <div id="marketPriceHint" style="font-size: 12px; color: #fbbf24; display: none;">
-                            📊 ราคากลางตลาด: <span id="retailPriceHint">0</span> บาท 
-                            (ส่วนต่างกำไร/ประหยัด: <span id="profitHint">0</span> บาท)
-                        </div>
-
-                        <div style="display: flex; gap: 8px;">
-                            <input type="number" id="newItemCost" placeholder="ราคาในฟาร์ม (บาท)" class="form-input" oninput="calculateHintProfit()">
-                            <input type="number" id="newItemRetail" placeholder="ราคากลาง (บาท)" class="form-input" oninput="calculateHintProfit()">
-                        </div>
-
-                        <select id="groupSelect" class="form-input" onchange="toggleNewGroupInput(this.value)"></select>
-
-                        <input type="text" id="newGroupName" placeholder="พิมพ์ชื่อกลุ่มใหม่..." class="form-input" style="display: none;">
-                        <button onclick="addNewButton()" class="btn-add" style="margin-top: 5px;">➕ เพิ่มปุ่มรายการ</button>
-                    </div>
-                    <p style="font-size: 0.8em; color: #94a3b8; margin-top: 10px; text-align: center;">* กดค้างหรือคลิกขวาที่ปุ่มสินค้าเพื่อลบรายการ</p>
-                </div>
-            </section>
-
-            <section class="account-panel">
-                <h2>💰 บัญชีฟาร์ม</h2>
-                <div id="summaryBoard" class="summary-box">
-                    <p>รายรับ: <span id="totalIncome" style="color: #10b981; font-weight: bold;">0</span> | รายจ่าย: <span id="totalExpense" style="color: #ef4444; font-weight: bold;">0</span></p>
-                    <h3>คงเหลือ: <span id="netBalance">0</span> บาท</h3>
-                </div>
-
-                <div id="knowledgeBox" class="knowledge-card" style="display: none; margin-top: 15px;">
-                    <div class="knowledge-header">
-                        <h4 id="knowledgeTitle">🐔 การเลี้ยงไก่ไข่</h4>
-                        <button onclick="closeKnowledge()" class="close-icon-btn">✖</button>
-                    </div>
-                    <p id="knowledgeContent">ควรให้อาหารโปรตีน 16-18% เพื่อการเจริญเติบโต และเสริมแคลเซียม (Ca/P 10:1) เพื่อสร้างเปลือกไข่ให้แข็งแรง</p>
-                </div>
-
-                <div id="expenseEntryArea" class="input-card" style="margin-top: 15px; background: #2d3748; padding: 15px; border-radius: 12px;">
-                    <input type="date" id="expenseDate">
-                    <input type="text" id="expenseDetail" placeholder="คลิกเลือกรายการผลผลิตด้านซ้าย">
-                    
-                    <div style="font-size: 12px; color: #94a3b8; display: flex; justify-content: space-between; margin: 6px 0; padding: 6px 10px; background: #1e293b; border-radius: 6px;">
-                        <span>🏡 ราคาในฟาร์ม: <b id="lblFarmPrice" style="color:#10b981;">0 ฿</b></span>
-                        <span>📊 ราคากลาง (ตลาด): <b id="lblMarketPrice" style="color:#60a5fa;">0 ฿</b></span>
-                    </div>
-
-                    <div style="display: flex; gap: 8px; margin-top: 5px;">
-                        <div style="flex: 1;">
-                            <label style="font-size: 11px; color: #cbd5e1;">ราคาซื้อ/ขายจริง (บาท)</label>
-                            <input type="number" id="unitPrice" placeholder="0" oninput="calculateTotal()">
-                        </div>
-                        <div style="flex: 1;">
-                            <label style="font-size: 11px; color: #cbd5e1;">จำนวน</label>
-                            <input type="number" id="unitQuantity" placeholder="1" value="1" oninput="calculateTotal()">
-                        </div>
-                    </div>
-                    
-                    <div class="total-display" style="text-align: right; color: #cbd5e1; margin-top: 8px;">
-                        ยอดรวม: <span id="displayTotal" style="font-size: 1.3em; font-weight: bold; color: #f59e0b;">0</span> บาท
-                    </div>
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button onclick="addEntry('รายรับ')" style="flex: 1; background:#10b981; font-weight: bold;">💰 รับเงิน</button>
-                        <button onclick="addEntry('รายจ่าย')" style="flex: 1; background:#ef4444; font-weight: bold;">💸 จ่ายเงิน</button>
-                    </div>
-                </div>
-
-                <div style="margin-top: 20px;">
-                    <h4 style="margin: 0 0 10px 0; color: #cbd5e1; display: flex; justify-content: space-between; align-items: center;">
-                        <span>รายการล่าสุด (5 รายการ)</span>
-                        <button onclick="openFullHistory()" style="background: transparent; border: 1px solid #60a5fa; color: #60a5fa; padding: 4px 8px; font-size: 12px;">ดูประวัติทั้งหมด 📝</button>
-                    </h4>
-                    <table class="history-table">
-                        <thead><tr><th>วันที่</th><th>รายการ</th><th>จำนวนเงิน</th></tr></thead>
-                        <tbody id="recentHistoryBody"></tbody>
-                    </table>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- 4. หน้าต่างประวัติแบบเต็ม (Full History Modal) -->
-    <div id="full-history-modal" class="modal-overlay" style="display:none;">
-        <div class="modal-content" style="width: 95%; max-width: 600px; height: 85vh;">
-            <div class="modal-header">
-                <h3>📋 ประวัติบัญชีทั้งหมด</h3>
-                <button onclick="closeFullHistory()" class="close-icon-btn">✖</button>
-            </div>
-            
-            <div class="modal-body" style="padding: 10px; flex: 1; display: flex; flex-direction: column;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <select id="monthFilter" style="width: auto;" onchange="renderFullHistory()">
-                        <option value="all">ดูทุกเดือน</option>
-                    </select>
-                    <div style="text-align: right; font-size: 13px; font-weight: bold;">
-                        รายรับ: <span id="modalInc" style="color:#10b981">0 ฿</span> | 
-                        รายจ่าย: <span id="modalExp" style="color:#ef4444">0 ฿</span>
-                    </div>
-                </div>
-
-                <div style="overflow-y: auto; flex: 1; border: 1px solid #334155; border-radius: 8px;">
-                    <table class="history-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 12%;">ลำดับ</th>
-                                <th style="width: 50%;">รายการ</th>
-                                <th style="width: 38%;">โน้ตเพิ่มเติม</th>
-                            </tr>
-                        </thead>
-                        <tbody id="fullHistoryBody"></tbody>
-                    </table>
-                </div>
-                <p style="font-size: 11px; color: #94a3b8; text-align: center; margin-top: 8px;">
-                    💡 <b>เคล็ดลับ:</b> กดค้างที่แถวรายการ (หรือคลิกขวา) เพื่อลบรายการบันทึก
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- 5. ดึง Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
-    <!-- 6. ตั้งค่า Firebase -->
-    <script>
-      const firebaseConfig = {
-        apiKey: "AIzaSyDpdTlIf2IHJWDAVlWRQvY2zNlvsewM0eQ",
-        authDomain: "farm-lamay.firebaseapp.com",
-        databaseURL: "https://farm-lamay-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "farm-lamay",
-        storageBucket: "farm-lamay.firebasestorage.app",
-        messagingSenderId: "699936204834",
-        appId: "1:699936204834:web:bc80527271cdd76668027b",
-        measurementId: "G-MNH5VLH78R"
-      };
-      firebase.initializeApp(firebaseConfig);
-      window.database = firebase.database();
-    </script>
-
-    <!-- 7. เรียกใช้ Service Worker และ Script หลัก -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Error:', err));
-        });
-      }
-    </script>
-    <!-- แก้ไข Path ไฟล์ให้ถูกต้องตามโครงสร้าง GitHub -->
-    <script src="script.js"></script>
-</body>
-</html>
-                    <div class="input-card">
-                        <input type="text" id="newItemName" placeholder="ชื่อรายการ (พิมพ์เพื่อดึงราคาตลาด)..." class="form-input" oninput="autoSuggestMarketPrice()">
-                        
-                        <div id="marketPriceHint" style="font-size: 12px; color: #fbbf24; display: none;">
-                            📊 ราคากลางตลาด: <span id="retailPriceHint">0</span> บาท 
-                            (ส่วนต่างกำไร/ประหยัด: <span id="profitHint">0</span> บาท)
-                        </div>
-
-                        <div style="display: flex; gap: 8px;">
-                            <input type="number" id="newItemCost" placeholder="ราคาในฟาร์ม (บาท)" class="form-input" oninput="calculateHintProfit()">
-                            <input type="number" id="newItemRetail" placeholder="ราคากลาง (บาท)" class="form-input" oninput="calculateHintProfit()">
-                        </div>
-
-                        <select id="groupSelect" class="form-input" onchange="toggleNewGroupInput(this.value)"></select>
-
-                        <input type="text" id="newGroupName" placeholder="พิมพ์ชื่อกลุ่มใหม่..." class="form-input" style="display: none;">
-                        <button onclick="addNewButton()" class="btn-add" style="margin-top: 5px;">➕ เพิ่มปุ่มรายการ</button>
-                    </div>
-                    <p style="font-size: 0.8em; color: #94a3b8; margin-top: 10px; text-align: center;">* กดค้างหรือคลิกขวาที่ปุ่มสินค้าเพื่อลบรายการ</p>
-                </div>
-            </section>
-
-            <section class="account-panel">
-                <h2>💰 บัญชีฟาร์ม</h2>
-                <div id="summaryBoard" class="summary-box">
-                    <p>รายรับ: <span id="totalIncome" style="color: #10b981; font-weight: bold;">0</span> | รายจ่าย: <span id="totalExpense" style="color: #ef4444; font-weight: bold;">0</span></p>
-                    <h3>คงเหลือ: <span id="netBalance">0</span> บาท</h3>
-                </div>
-
-                <div id="knowledgeBox" class="knowledge-card" style="display: none; margin-top: 15px;">
-                    <div class="knowledge-header">
-                        <h4 id="knowledgeTitle">🐔 การเลี้ยงไก่ไข่</h4>
-                        <button onclick="closeKnowledge()" class="close-icon-btn">✖</button>
-                    </div>
-                    <p id="knowledgeContent">ควรให้อาหารโปรตีน 16-18% เพื่อการเจริญเติบโต และเสริมแคลเซียม (Ca/P 10:1) เพื่อสร้างเปลือกไข่ให้แข็งแรง</p>
-                </div>
-
-                <div id="expenseEntryArea" class="input-card" style="margin-top: 15px; background: #2d3748; padding: 15px; border-radius: 12px;">
-                    <input type="date" id="expenseDate">
-                    <input type="text" id="expenseDetail" placeholder="คลิกเลือกรายการผลผลิตด้านซ้าย">
-                    
-                    <div style="font-size: 12px; color: #94a3b8; display: flex; justify-content: space-between; margin: 6px 0; padding: 6px 10px; background: #1e293b; border-radius: 6px;">
-                        <span>🏡 ราคาในฟาร์ม: <b id="lblFarmPrice" style="color:#10b981;">0 ฿</b></span>
-                        <span>📊 ราคากลาง (ตลาด): <b id="lblMarketPrice" style="color:#60a5fa;">0 ฿</b></span>
-                    </div>
-
-                    <div style="display: flex; gap: 8px; margin-top: 5px;">
-                        <div style="flex: 1;">
-                            <label style="font-size: 11px; color: #cbd5e1;">ราคาซื้อ/ขายจริง (บาท)</label>
-                            <input type="number" id="unitPrice" placeholder="0" oninput="calculateTotal()">
-                        </div>
-                        <div style="flex: 1;">
-                            <label style="font-size: 11px; color: #cbd5e1;">จำนวน</label>
-                            <input type="number" id="unitQuantity" placeholder="1" value="1" oninput="calculateTotal()">
-                        </div>
-                    </div>
-                    
-                    <div class="total-display" style="text-align: right; color: #cbd5e1; margin-top: 8px;">
-                        ยอดรวม: <span id="displayTotal" style="font-size: 1.3em; font-weight: bold; color: #f59e0b;">0</span> บาท
-                    </div>
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button onclick="addEntry('รายรับ')" style="flex: 1; background:#10b981; font-weight: bold;">💰 รับเงิน</button>
-                        <button onclick="addEntry('รายจ่าย')" style="flex: 1; background:#ef4444; font-weight: bold;">💸 จ่ายเงิน</button>
-                    </div>
-                </div>
-
-                <div style="margin-top: 20px;">
-                    <h4 style="margin: 0 0 10px 0; color: #cbd5e1; display: flex; justify-content: space-between; align-items: center;">
-                        <span>รายการล่าสุด (5 รายการ)</span>
-                        <button onclick="openFullHistory()" style="background: transparent; border: 1px solid #60a5fa; color: #60a5fa; padding: 4px 8px; font-size: 12px;">ดูประวัติทั้งหมด 📝</button>
-                    </h4>
-                    <table class="history-table">
-                        <thead><tr><th>วันที่</th><th>รายการ</th><th>จำนวนเงิน</th></tr></thead>
-                        <tbody id="recentHistoryBody"></tbody>
-                    </table>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- 4. หน้าต่างประวัติแบบเต็ม (Full History Modal) -->
-    <div id="full-history-modal" class="modal-overlay" style="display:none;">
-        <div class="modal-content" style="width: 95%; max-width: 600px; height: 85vh;">
-            <div class="modal-header">
-                <h3>📋 ประวัติบัญชีทั้งหมด</h3>
-                <button onclick="closeFullHistory()" class="close-icon-btn">✖</button>
-            </div>
-            
-            <div class="modal-body" style="padding: 10px; flex: 1; display: flex; flex-direction: column;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <select id="monthFilter" style="width: auto;" onchange="renderFullHistory()">
-                        <option value="all">ดูทุกเดือน</option>
-                    </select>
-                    <div style="text-align: right; font-size: 13px; font-weight: bold;">
-                        รายรับ: <span id="modalInc" style="color:#10b981">0 ฿</span> | 
-                        รายจ่าย: <span id="modalExp" style="color:#ef4444">0 ฿</span>
-                    </div>
-                </div>
-
-                <div style="overflow-y: auto; flex: 1; border: 1px solid #334155; border-radius: 8px;">
-                    <table class="history-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 12%;">ลำดับ</th>
-                                <th style="width: 50%;">รายการ</th>
-                                <th style="width: 38%;">โน้ตเพิ่มเติม</th>
-                            </tr>
-                        </thead>
-                        <tbody id="fullHistoryBody"></tbody>
-                    </table>
-                </div>
-                <p style="font-size: 11px; color: #94a3b8; text-align: center; margin-top: 8px;">
-                    💡 <b>เคล็ดลับ:</b> กดค้างที่แถวรายการ (หรือคลิกขวา) เพื่อลบรายการบันทึก
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- ดึง Firebase SDK (App + Database) -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
-    <!-- เชื่อมต่อ Firebase Config -->
-    <script>
-      const firebaseConfig = {
-        apiKey: "AIzaSyDpdTlIf2IHJWDAVlWRQvY2zNlvsewM0eQ",
-        authDomain: "farm-lamay.firebaseapp.com",
-        databaseURL: "https://farm-lamay-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "farm-lamay",
-        storageBucket: "farm-lamay.firebasestorage.app",
-        messagingSenderId: "699936204834",
-        appId: "1:699936204834:web:bc80527271cdd76668027b",
-        measurementId: "G-MNH5VLH78R"
-      };
-      firebase.initializeApp(firebaseConfig);
-      window.database = firebase.database();
-    </script>
-
-    <!-- เรียกใช้ script.js -->
-    <script src="JS/script.js"></script>
-</body>
-</html>
-        </header>
-
-        <main class="dashboard-grid">
-            <!-- ฝั่งเมนูจัดการสินค้า -->
+            <!-- ฝั่งซ้าย: เมนูจัดการสินค้า -->
             <section class="menu-panel">
                 <input type="text" id="searchItem" placeholder="🔍 ค้นหารายการ..." oninput="filterButtons(this.value)" class="form-input" style="margin-bottom: 20px; width: 100%;">
                 
                 <div id="groups-container">
-                    <!-- รายการปุ่มสินค้าจะสร้างผ่าน JS -->
+                    <!-- รายการกลุ่มและปุ่มสินค้าจะถูกสร้างที่นี่โดย JavaScript -->
                 </div>
                 
-                <!-- ส่วนจัดการรายการสินค้าใหม่ -->
                 <div class="editor-box" style="margin-top: 20px;">
                     <h4 style="margin-top: 0; color: #60a5fa;">⚙️ จัดการรายการสินค้าใหม่</h4>
                     <div class="input-card">
@@ -427,7 +129,7 @@
                         </div>
 
                         <select id="groupSelect" class="form-input" onchange="toggleNewGroupInput(this.value)">
-                            <!-- ตัวเลือกกลุ่มสินค้าจะสร้างผ่าน JS -->
+                            <!-- ตัวเลือกจะถูกสร้างโดย JavaScript -->
                         </select>
 
                         <input type="text" id="newGroupName" placeholder="พิมพ์ชื่อกลุ่มใหม่..." class="form-input" style="display: none;">
@@ -437,7 +139,7 @@
                 </div>
             </section>
 
-            <!-- ฝั่งบัญชีและสรุปยอด -->
+            <!-- ฝั่งขวา: บัญชีและสรุปยอด -->
             <section class="account-panel">
                 <h2>💰 บัญชีฟาร์ม</h2>
                 <div id="summaryBoard" class="summary-box">
@@ -445,7 +147,6 @@
                     <h3>คงเหลือ: <span id="netBalance">0</span> บาท</h3>
                 </div>
 
-                <!-- 💡 กล่องความรู้แบบ AI (Gemini Knowledge Box) -->
                 <div id="knowledgeBox" class="knowledge-card" style="display: none; margin-top: 15px;">
                     <div class="knowledge-header">
                         <h4 id="knowledgeTitle">🐔 การเลี้ยงไก่ไข่</h4>
@@ -454,12 +155,10 @@
                     <p id="knowledgeContent">ควรให้อาหารโปรตีน 16-18% เพื่อการเจริญเติบโต และเสริมแคลเซียม (Ca/P 10:1) เพื่อสร้างเปลือกไข่ให้แข็งแรง</p>
                 </div>
 
-                <!-- ฟอร์มบันทึกรายการ -->
                 <div id="expenseEntryArea" class="input-card" style="margin-top: 15px; background: #2d3748; padding: 15px; border-radius: 12px;">
                     <input type="date" id="expenseDate">
                     <input type="text" id="expenseDetail" placeholder="คลิกเลือกรายการผลผลิตด้านซ้าย">
                     
-                    <!-- ส่วนแสดงราคากลาง vs ราคาในฟาร์ม -->
                     <div style="font-size: 12px; color: #94a3b8; display: flex; justify-content: space-between; margin: 6px 0; padding: 6px 10px; background: #1e293b; border-radius: 6px;">
                         <span>🏡 ราคาในฟาร์ม: <b id="lblFarmPrice" style="color:#10b981;">0 ฿</b></span>
                         <span>📊 ราคากลาง (ตลาด): <b id="lblMarketPrice" style="color:#60a5fa;">0 ฿</b></span>
@@ -485,7 +184,6 @@
                     </div>
                 </div>
 
-                <!-- ตารางประวัติ (5 รายการล่าสุด) -->
                 <div style="margin-top: 20px;">
                     <h4 style="margin: 0 0 10px 0; color: #cbd5e1; display: flex; justify-content: space-between; align-items: center;">
                         <span>รายการล่าสุด (5 รายการ)</span>
@@ -540,29 +238,44 @@
         </div>
     </div>
 
-    <!-- 1. ดึง Firebase SDK (App + Realtime Database) -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <!-- ========================================== -->
+    <!-- 5. ดึง Firebase SDK (App + Database) -->
+    <!-- ========================================== -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
-<!-- 2. ตั้งค่าการเชื่อมต่อฐานข้อมูล farm-lamay -->
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDpdTlIf2IHJWDAVlWRQvY2zNlvsewM0eQ",
-    authDomain: "farm-lamay.firebaseapp.com",
-    databaseURL: "https://farm-lamay-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "farm-lamay",
-    storageBucket: "farm-lamay.firebasestorage.app",
-    messagingSenderId: "699936204834",
-    appId: "1:699936204834:web:bc80527271cdd76668027b",
-    measurementId: "G-MNH5VLH78R"
-  };
+    <!-- ========================================== -->
+    <!-- 6. ตั้งค่าการเชื่อมต่อฐานข้อมูล farm-lamay -->
+    <!-- ========================================== -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDpdTlIf2IHJWDAVlWRQvY2zNlvsewM0eQ",
+            authDomain: "farm-lamay.firebaseapp.com",
+            databaseURL: "https://farm-lamay-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "farm-lamay",
+            storageBucket: "farm-lamay.firebasestorage.app",
+            messagingSenderId: "699936204834",
+            appId: "1:699936204834:web:bc80527271cdd76668027b",
+            measurementId: "G-MNH5VLH78R"
+        };
+        firebase.initializeApp(firebaseConfig);
+        window.database = firebase.database();
+    </script>
 
-  // เชื่อมต่อฐานข้อมูล
-  firebase.initializeApp(firebaseConfig);
-  const database = firebase.database();
-</script>
+    <!-- ========================================== -->
+    <!-- 7. Service Worker และ Script หลัก -->
+    <!-- ========================================== -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Error:', err));
+            });
+        }
+    </script>
     
-    <!-- ไฟล์ Script หลัก -->
+    <!-- ตรงนี้อ้างอิงไฟล์ script.js เพียงที่เดียว -->
     <script src="script.js"></script>
+
 </body>
-</html>
+    </html>
+
