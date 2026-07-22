@@ -1,281 +1,685 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="manifest.json">
-    <title>ละม้ายฟาร์ม - จัดการผลผลิต</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-    <!-- ========================================== -->
-    <!-- 1. หน้าเข้าสู่ระบบ (Login Page) -->
-    <!-- ========================================== -->
-    <div id="login-page" class="page">
-        <div class="login-container">
-            <h2>🔐 เข้าสู่ระบบ</h2>
-            <div class="input-card" style="width: 85%; max-width: 320px;">
-                <input type="text" id="loginUsername" placeholder="ชื่อผู้ใช้งาน (Username)">
-                
-                <div class="password-wrapper">
-                    <input type="password" id="loginPassword" placeholder="รหัสผ่าน">
-                    <span class="fingerprint-icon" onclick="biometricLogin()" title="แตะเพื่อสแกนนิ้ว/สแกนหน้าแทนรหัสผ่าน">👆</span>
-                </div>
-
-                <button onclick="login()" style="width: 100%; margin-top: 5px; font-weight: bold;">เข้าสู่ระบบ</button>
-                
-                <div class="divider"><span>หรือเข้าสู่ระบบด้วย</span></div>
-                
-                <div class="social-login-row">
-                    <button class="social-btn line-btn" onclick="socialLogin('LINE')" title="เข้าสู่ระบบด้วย LINE">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.036 9.608.391.084.922.258 1.057.592.121.303.079.778.039 1.085l-.171 1.027c-.053.303-.242 1.186 1.039.647 1.281-.54 6.911-4.069 9.428-6.967 1.739-1.907 2.572-3.843 2.572-6.002z"/></svg>
-                    </button>
-                    <button class="social-btn fb-btn" onclick="socialLogin('Facebook')" title="เข้าสู่ระบบด้วย Facebook">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                    </button>
-                    <button class="social-btn google-btn" onclick="socialLogin('Google')" title="เข้าสู่ระบบด้วย Google">
-                        <svg width="22" height="22" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.28v3.15C3.26 21.3 7.37 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.28C.46 8.21 0 10.05 0 12s.46 3.79 1.28 5.42l4-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.37 0 3.26 2.7 1.28 6.58l4 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
-                    </button>
-                </div>
-
-                <p style="text-align: center; font-size: 13px; color: #94a3b8; margin-top: 20px;">
-                    ผู้ใช้ใหม่? <a href="#" onclick="switchPage('register-page')" style="color: #60a5fa;">ลงทะเบียนที่นี่</a>
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- 2. หน้าลงทะเบียนผู้ใช้ใหม่ (Register Page) -->
-    <!-- ========================================== -->
-    <div id="register-page" class="page" style="display:none;">
-        <div class="login-container" style="padding: 20px 0;">
-            <h2>📝 ลงทะเบียนสมาชิกใหม่</h2>
-            <div class="input-card" style="width: 85%; max-width: 350px; background: #1e293b; padding: 20px; border-radius: 12px;">
-                <div class="profile-upload-container">
-                    <img id="regAvatarPreview" src="https://via.placeholder.com/80" class="avatar-img-lg">
-                    <button onclick="document.getElementById('regAvatarFile').click()" class="btn-small">📸 อัปโหลดรูปโปรไฟล์</button>
-                    <input type="file" id="regAvatarFile" accept="image/*" style="display:none" onchange="previewRegAvatar(event)">
-                </div>
-
-                <input type="text" id="regUsername" placeholder="ชื่อผู้ใช้งาน (สำหรับ Login)*" required>
-                <input type="password" id="regPassword" placeholder="รหัสผ่าน (ต้องมีพิมพ์ใหญ่ 1 ตัว)*" required>
-                
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="regFirstName" placeholder="ชื่อจริง">
-                    <input type="text" id="regLastName" placeholder="นามสกุล">
-                </div>
-                
-                <div class="form-row-compact">
-                    <input type="text" id="regNickname" placeholder="ชื่อเล่น*" required style="flex: 2; min-width: 0;">
-                    <select id="regGender" required style="flex: 1.5; min-width: 0;">
-                        <option value="" disabled selected hidden>เพศ</option>
-                        <option value="ชาย">ชาย</option>
-                        <option value="หญิง">หญิง</option>
-                    </select>
-                    <input type="number" id="regAge" placeholder="อายุ" style="flex: 1; min-width: 0;">
-                </div>
-
-                <input type="email" id="regEmail" placeholder="อีเมล (สำหรับการกู้คืน)">
-                <input type="tel" id="regPhone" placeholder="เบอร์โทรศัพท์">
-                
-                <button onclick="registerUser()" style="background: #10b981; margin-top: 15px;">✅ ยืนยันการลงทะเบียน</button>
-                <button onclick="switchPage('login-page')" style="background: transparent; color: #94a3b8; border: 1px solid #475569;">ย้อนกลับไปเข้าสู่ระบบ</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- 3. หน้าใช้งานหลัก (Main App Page) -->
-    <!-- ========================================== -->
-    <div id="app-page" class="page" style="display:none;">
-        <header class="game-header">
-            <div class="user-header-info">
-                <img id="headerAvatar" src="https://via.placeholder.com/45" class="avatar-img-sm">
-                <div>
-                    <h1>FARM LAMAY</h1>
-                    <p>สวัสดี: <span id="displayName" style="color: #60a5fa; font-weight: bold;"></span></p>
-                </div>
-            </div>
-            <div style="display: flex; gap: 8px;">
-                <button id="btnSetGeminiKey" onclick="setGeminiKey()" style="background: #334155; border: 1px solid #64748b; padding: 8px 12px; display: none;" title="ตั้งค่า Gemini API Key">🔑 ตั้งค่า AI</button>
-                <button onclick="logout()" class="danger-btn" style="padding: 8px 12px;">ออกจากระบบ</button>
-            </div>
-        </header>
-
-        <main class="dashboard-grid">
-            <!-- ฝั่งซ้าย: เมนูจัดการสินค้า -->
-            <section class="menu-panel">
-                <input type="text" id="searchItem" placeholder="🔍 ค้นหารายการ..." oninput="filterButtons(this.value)" class="form-input" style="margin-bottom: 20px; width: 100%;">
-                
-                <div id="groups-container">
-                    <!-- รายการกลุ่มและปุ่มสินค้าจะถูกสร้างที่นี่โดย JavaScript -->
-                </div>
-                
-                <div class="editor-box" style="margin-top: 20px;">
-                    <h4 style="margin-top: 0; color: #60a5fa;">⚙️ จัดการรายการสินค้าใหม่</h4>
-                    <div class="input-card">
-                        <input type="text" id="newItemName" placeholder="ชื่อรายการ (พิมพ์เพื่อดึงราคาตลาด)..." class="form-input" oninput="autoSuggestMarketPrice()">
-                        
-                        <div id="marketPriceHint" style="font-size: 12px; color: #fbbf24; display: none;">
-                            📊 ราคากลางตลาด: <span id="retailPriceHint">0</span> บาท 
-                            (ส่วนต่างกำไร/ประหยัด: <span id="profitHint">0</span> บาท)
-                        </div>
-
-                        <div style="display: flex; gap: 8px;">
-                            <input type="number" id="newItemCost" placeholder="ราคาในฟาร์ม (บาท)" class="form-input" oninput="calculateHintProfit()">
-                            <input type="number" id="newItemRetail" placeholder="ราคากลาง (บาท)" class="form-input" oninput="calculateHintProfit()">
-                        </div>
-
-                        <select id="groupSelect" class="form-input" onchange="toggleNewGroupInput(this.value)">
-                            <!-- ตัวเลือกจะถูกสร้างโดย JavaScript -->
-                        </select>
-
-                        <input type="text" id="newGroupName" placeholder="พิมพ์ชื่อกลุ่มใหม่..." class="form-input" style="display: none;">
-                        <button onclick="addNewButton()" class="btn-add" style="margin-top: 5px;">➕ เพิ่มปุ่มรายการ</button>
-                    </div>
-                    <p style="font-size: 0.8em; color: #94a3b8; margin-top: 10px; text-align: center;">* กดค้างหรือคลิกขวาที่ปุ่มสินค้าเพื่อลบรายการ</p>
-                </div>
-            </section>
-
-            <!-- ฝั่งขวา: บัญชีและสรุปยอด -->
-            <section class="account-panel">
-                <h2>💰 บัญชีฟาร์ม</h2>
-                <div id="summaryBoard" class="summary-box">
-                    <p>รายรับ: <span id="totalIncome" style="color: #10b981; font-weight: bold;">0</span> | รายจ่าย: <span id="totalExpense" style="color: #ef4444; font-weight: bold;">0</span></p>
-                    <h3>คงเหลือ: <span id="netBalance">0</span> บาท</h3>
-                </div>
-
-                <div id="knowledgeBox" class="knowledge-card" style="display: none; margin-top: 15px;">
-                    <div class="knowledge-header">
-                        <h4 id="knowledgeTitle">🐔 การเลี้ยงไก่ไข่</h4>
-                        <button onclick="closeKnowledge()" class="close-icon-btn">✖</button>
-                    </div>
-                    <p id="knowledgeContent">ควรให้อาหารโปรตีน 16-18% เพื่อการเจริญเติบโต และเสริมแคลเซียม (Ca/P 10:1) เพื่อสร้างเปลือกไข่ให้แข็งแรง</p>
-                </div>
-
-                <div id="expenseEntryArea" class="input-card" style="margin-top: 15px; background: #2d3748; padding: 15px; border-radius: 12px;">
-                    <input type="date" id="expenseDate">
-                    <input type="text" id="expenseDetail" placeholder="คลิกเลือกรายการผลผลิตด้านซ้าย">
-                    
-                    <div style="font-size: 12px; color: #94a3b8; display: flex; justify-content: space-between; margin: 6px 0; padding: 6px 10px; background: #1e293b; border-radius: 6px;">
-                        <span>🏡 ราคาในฟาร์ม: <b id="lblFarmPrice" style="color:#10b981;">0 ฿</b></span>
-                        <span>📊 ราคากลาง (ตลาด): <b id="lblMarketPrice" style="color:#60a5fa;">0 ฿</b></span>
-                    </div>
-
-                    <div style="display: flex; gap: 8px; margin-top: 5px;">
-                        <div style="flex: 1;">
-                            <label style="font-size: 11px; color: #cbd5e1;">ราคาซื้อ/ขายจริง (บาท)</label>
-                            <input type="number" id="unitPrice" placeholder="0" oninput="calculateTotal()">
-                        </div>
-                        <div style="flex: 1;">
-                            <label style="font-size: 11px; color: #cbd5e1;">จำนวน</label>
-                            <input type="number" id="unitQuantity" placeholder="1" value="1" oninput="calculateTotal()">
-                        </div>
-                    </div>
-                    
-                    <div class="total-display" style="text-align: right; color: #cbd5e1; margin-top: 8px;">
-                        ยอดรวม: <span id="displayTotal" style="font-size: 1.3em; font-weight: bold; color: #f59e0b;">0</span> บาท
-                    </div>
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button onclick="addEntry('รายรับ')" style="flex: 1; background:#10b981; font-weight: bold;">💰 รับเงิน</button>
-                        <button onclick="addEntry('รายจ่าย')" style="flex: 1; background:#ef4444; font-weight: bold;">💸 จ่ายเงิน</button>
-                    </div>
-                </div>
-
-                <div style="margin-top: 20px;">
-                    <h4 style="margin: 0 0 10px 0; color: #cbd5e1; display: flex; justify-content: space-between; align-items: center;">
-                        <span>รายการล่าสุด (5 รายการ)</span>
-                        <button onclick="openFullHistory()" style="background: transparent; border: 1px solid #60a5fa; color: #60a5fa; padding: 4px 8px; font-size: 12px;">ดูประวัติทั้งหมด 📝</button>
-                    </h4>
-                    <table class="history-table">
-                        <thead><tr><th>วันที่</th><th>รายการ</th><th>จำนวนเงิน</th></tr></thead>
-                        <tbody id="recentHistoryBody"></tbody>
-                    </table>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- 4. หน้าต่างประวัติแบบเต็ม (Full History Modal) -->
-    <!-- ========================================== -->
-    <div id="full-history-modal" class="modal-overlay" style="display:none;">
-        <div class="modal-content" style="width: 95%; max-width: 600px; height: 85vh;">
-            <div class="modal-header">
-                <h3>📋 ประวัติบัญชีทั้งหมด</h3>
-                <button onclick="closeFullHistory()" class="close-icon-btn">✖</button>
-            </div>
-            
-            <div class="modal-body" style="padding: 10px; flex: 1; display: flex; flex-direction: column;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <select id="monthFilter" style="width: auto;" onchange="renderFullHistory()">
-                        <option value="all">ดูทุกเดือน</option>
-                    </select>
-                    <div style="text-align: right; font-size: 13px; font-weight: bold;">
-                        รายรับ: <span id="modalInc" style="color:#10b981">0 ฿</span> | 
-                        รายจ่าย: <span id="modalExp" style="color:#ef4444">0 ฿</span>
-                    </div>
-                </div>
-
-                <div style="overflow-y: auto; flex: 1; border: 1px solid #334155; border-radius: 8px;">
-                    <table class="history-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 12%;">ลำดับ</th>
-                                <th style="width: 50%;">รายการ</th>
-                                <th style="width: 38%;">โน้ตเพิ่มเติม</th>
-                            </tr>
-                        </thead>
-                        <tbody id="fullHistoryBody"></tbody>
-                    </table>
-                </div>
-                <p style="font-size: 11px; color: #94a3b8; text-align: center; margin-top: 8px;">
-                    💡 <b>เคล็ดลับ:</b> กดค้างที่แถวรายการ (หรือคลิกขวา) เพื่อลบรายการบันทึก
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- 5. ดึง Firebase SDK (App + Database) -->
-    <!-- ========================================== -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
-    <!-- ========================================== -->
-    <!-- 6. ตั้งค่าการเชื่อมต่อฐานข้อมูล farm-lamay -->
-    <!-- ========================================== -->
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDpdTlIf2IHJWDAVlWRQvY2zNlvsewM0eQ",
-            authDomain: "farm-lamay.firebaseapp.com",
-            databaseURL: "https://farm-lamay-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "farm-lamay",
-            storageBucket: "farm-lamay.firebasestorage.app",
-            messagingSenderId: "699936204834",
-            appId: "1:699936204834:web:bc80527271cdd76668027b",
-            measurementId: "G-MNH5VLH78R"
-        };
-        firebase.initializeApp(firebaseConfig);
-        window.database = firebase.database();
-    </script>
-
-    <!-- ========================================== -->
-    <!-- 7. Service Worker และ Script หลัก -->
-    <!-- ========================================== -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Error:', err));
-            });
-        }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ไร่ละไม - Farm Management System</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Sarabun', sans-serif; }
     
-    <!-- ตรงนี้อ้างอิงไฟล์ script.js เพียงที่เดียว -->
-    <script src="script.js"></script>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+
+  <!-- LOGIN PAGE -->
+  <div id="login-page" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 px-4">
+    <div class="glass-card w-full max-w-sm p-8 rounded-3xl shadow-2xl border border-slate-800 text-center space-y-6">
+      <div class="inline-flex p-4 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 text-emerald-400 mb-2">
+        <i class="fa-solid fa-wheat-awn text-4xl"></i>
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-slate-100">ไร่ละไม (Farm Lamay)</h2>
+        <p class="text-xs text-slate-400 mt-1">กรอกชื่อและรหัสผ่านเพื่อเข้าสู่ระบบ</p>
+      </div>
+
+      <div class="space-y-3 text-left">
+        <div>
+          <label class="text-xs text-slate-400 mb-1 block">ชื่อผู้ใช้งาน</label>
+          <input type="text" id="nameInput" placeholder="กรอกชื่อของคุณ" class="w-full bg-slate-900/90 border border-slate-700 focus:border-emerald-500 rounded-xl px-4 py-2.5 text-sm text-slate-100 outline-none transition">
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 mb-1 block">รหัสผ่าน</label>
+          <input type="password" id="passInput" placeholder="รหัสผ่าน (1234)" class="w-full bg-slate-900/90 border border-slate-700 focus:border-emerald-500 rounded-xl px-4 py-2.5 text-sm text-slate-100 outline-none transition">
+        </div>
+      </div>
+
+      <button onclick="login()" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-semibold py-3 rounded-xl shadow-lg shadow-emerald-900/30 transition duration-200">
+        <i class="fa-solid fa-right-to-bracket mr-2"></i>เข้าสู่ระบบ
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN APP PAGE -->
+  <div id="app-page" class="hidden flex-col flex-1">
+    
+    <!-- Header -->
+    <header class="bg-slate-950/80 backdrop-blur border-b border-slate-800 sticky top-0 z-40 px-4 py-3">
+      <div class="max-w-5xl mx-auto flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+          <div class="bg-emerald-500 p-2 rounded-xl text-slate-950 font-bold">
+            <i class="fa-solid fa-leaf text-xl"></i>
+          </div>
+          <div>
+            <h1 class="text-base font-bold text-emerald-100 flex items-center gap-2">
+              ไร่ละไม
+              <span class="text-xs font-normal text-slate-400">| สวัสดีคุณ <span id="displayName" class="text-emerald-400 font-semibold"></span></span>
+            </h1>
+            <p class="text-[11px] text-slate-400">ระบบบริหารจัดการฟาร์มอัจฉริยะ</p>
+          </div>
+        </div>
+
+        <button onclick="logout()" class="text-xs bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+          <i class="fa-solid fa-power-off"></i> <span class="hidden sm:inline">ออกจากระบบ</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="bg-slate-900 border-b border-slate-800">
+      <div class="max-w-5xl mx-auto flex gap-2 px-4 pt-3">
+        <button id="tab-dashboard-btn" onclick="switchTab('dashboard')" class="px-4 py-2 text-xs font-medium rounded-t-xl transition flex items-center gap-2 border-t border-x border-transparent">
+          <i class="fa-solid fa-gauge-high"></i> ควบคุมอุปกรณ์ & สถานะ
+        </button>
+        <button id="tab-account-btn" onclick="switchTab('account')" class="px-4 py-2 text-xs font-medium rounded-t-xl transition flex items-center gap-2 border-t border-x border-transparent">
+          <i class="fa-solid fa-boxes-packing"></i> บัญชี & จัดการผลผลิต
+        </button>
+      </div>
+    </div>
+
+    <!-- Container Content -->
+    <main class="max-w-5xl mx-auto px-4 py-6 flex-1 w-full">
+
+      <!-- TAB 1: DASHBOARD & IOT -->
+      <section id="tab-dashboard" class="space-y-6">
+        <div class="flex justify-between items-center">
+          <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+            <i class="fa-solid fa-tower-broadcast text-emerald-400"></i> สถานะการทำงาน Real-time
+          </h2>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-400 rounded-full animate-pulse"></span> ระบบเชื่อมต่อปกติ
+          </span>
+        </div>
+
+        <!-- Status Overview Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="glass-card p-4 rounded-2xl shadow-lg">
+            <div class="flex justify-between items-start text-amber-400 mb-2">
+              <i class="fa-solid fa-temperature-half text-2xl"></i>
+              <span class="text-xs text-slate-400">อุณหภูมิ</span>
+            </div>
+            <div class="text-2xl font-bold">31.5 <span class="text-sm font-normal text-slate-400">°C</span></div>
+            <p class="text-[10px] text-emerald-400 mt-1 flex items-center gap-1"><i class="fa-solid fa-check"></i> ปกติสำหรับแปลงผัก</p>
+          </div>
+
+          <div class="glass-card p-4 rounded-2xl shadow-lg">
+            <div class="flex justify-between items-start text-sky-400 mb-2">
+              <i class="fa-solid fa-droplet text-2xl"></i>
+              <span class="text-xs text-slate-400">ระดับน้ำสระ</span>
+            </div>
+            <div class="text-2xl font-bold">85 <span class="text-sm font-normal text-slate-400">%</span></div>
+            <p class="text-[10px] text-sky-400 mt-1 flex items-center gap-1"><i class="fa-solid fa-water"></i> เพียงพอต่อการเกษตร</p>
+          </div>
+
+          <div class="glass-card p-4 rounded-2xl shadow-lg">
+            <div class="flex justify-between items-start text-emerald-400 mb-2">
+              <i class="fa-solid fa-mountain-sun text-2xl"></i>
+              <span class="text-xs text-slate-400">ความชื้นในดิน</span>
+            </div>
+            <div class="text-2xl font-bold">68 <span class="text-sm font-normal text-slate-400">%</span></div>
+            <p class="text-[10px] text-emerald-400 mt-1 flex items-center gap-1"><i class="fa-solid fa-check"></i> เหมาะสมกับการเติบโต</p>
+          </div>
+
+          <div class="glass-card p-4 rounded-2xl shadow-lg">
+            <div class="flex justify-between items-start text-indigo-400 mb-2">
+              <i class="fa-solid fa-bolt text-2xl"></i>
+              <span class="text-xs text-slate-400">พลังงานโซลาร์</span>
+            </div>
+            <div class="text-2xl font-bold">12.8 <span class="text-sm font-normal text-slate-400">V</span></div>
+            <p class="text-[10px] text-indigo-400 mt-1 flex items-center gap-1"><i class="fa-solid fa-battery-full"></i> แบตเตอรี่เต็ม</p>
+          </div>
+        </div>
+
+        <!-- Quick Controls -->
+        <div class="glass-card rounded-2xl p-5 shadow-lg space-y-4">
+          <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-emerald-400"></i> สวิตช์สั่งการอุปกรณ์
+          </h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="flex justify-between items-center p-3.5 bg-slate-900/80 rounded-xl border border-slate-700/50">
+              <div class="flex items-center space-x-3">
+                <div class="p-2.5 bg-emerald-500/10 text-emerald-400 rounded-lg">
+                  <i class="fa-solid fa-faucet-drip text-lg"></i>
+                </div>
+                <div>
+                  <p class="text-sm font-medium">ปั๊มน้ำระบบรดน้ำ</p>
+                  <p class="text-xs text-slate-400">แปลงผัก / โรงเรือน</p>
+                </div>
+              </div>
+              <button id="pumpBtn" onclick="toggleSwitch('pumpBtn')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-1.5 rounded-lg text-xs font-semibold transition">
+                เปิดอยู่
+              </button>
+            </div>
+
+            <div class="flex justify-between items-center p-3.5 bg-slate-900/80 rounded-xl border border-slate-700/50">
+              <div class="flex items-center space-x-3">
+                <div class="p-2.5 bg-amber-500/10 text-amber-400 rounded-lg">
+                  <i class="fa-solid fa-lightbulb text-lg"></i>
+                </div>
+                <div>
+                  <p class="text-sm font-medium">ไฟส่องสว่างโซลาร์เซลล์</p>
+                  <p class="text-xs text-slate-400">รอบสระน้ำ 7 ไร่</p>
+                </div>
+              </div>
+              <button id="lightBtn" onclick="toggleSwitch('lightBtn')" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-4 py-1.5 rounded-lg text-xs font-semibold transition">
+                ปิดอยู่
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="glass-card rounded-2xl p-5 shadow-lg">
+          <h2 class="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-sky-400"></i> บันทึกกิจกรรมล่าสุด
+          </h2>
+          <ul id="systemLogs" class="space-y-2.5 text-xs text-slate-300">
+            <li class="flex justify-between border-b border-slate-800 pb-2">
+              <span class="flex items-center gap-2"><i class="fa-solid fa-circle text-[6px] text-emerald-400"></i> รดน้ำแปลงผักอัตโนมัติ</span>
+              <span class="text-slate-500">08:00 น.</span>
+            </li>
+            <li class="flex justify-between border-b border-slate-800 pb-2">
+              <span class="flex items-center gap-2"><i class="fa-solid fa-circle text-[6px] text-sky-400"></i> ตรวจพบไฟฟ้ากระแสสลับปกติ</span>
+              <span class="text-slate-500">06:30 น.</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- TAB 2: ACCOUNT & INVENTORY -->
+      <section id="tab-account" class="hidden space-y-6">
+        
+        <!-- Balance Summary Board -->
+        <div class="glass-card p-6 rounded-3xl shadow-xl border border-slate-700/50 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900">
+          <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
+            <div>
+              <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">ภาพรวมบัญชีฟาร์ม</span>
+              <h3 class="text-3xl font-extrabold text-slate-100 mt-1">
+                คงเหลือ: <span id="netBalance" class="text-amber-400">0</span> <span class="text-base font-normal text-slate-400">บาท</span>
+              </h3>
+            </div>
+            <div class="flex gap-4 border-t md:border-t-0 border-slate-800 pt-3 md:pt-0">
+              <div class="bg-emerald-950/40 border border-emerald-500/20 px-4 py-2 rounded-2xl">
+                <p class="text-[11px] text-slate-400">รายรับรวม</p>
+                <p class="text-lg font-bold text-emerald-400">+<span id="totalIncome">0</span></p>
+              </div>
+              <div class="bg-rose-950/40 border border-rose-500/20 px-4 py-2 rounded-2xl">
+                <p class="text-[11px] text-slate-400">รายจ่ายรวม</p>
+                <p class="text-lg font-bold text-rose-400">-<span id="totalExpense">0</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Left Column: Inventory Items Selection -->
+          <div class="lg:col-span-7 space-y-6">
+            <div class="glass-card p-5 rounded-2xl shadow-lg space-y-4">
+              <div class="flex justify-between items-center">
+                <h3 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                  <i class="fa-solid fa-boxes-stacked text-sky-400"></i> หน่วยจัดการผลผลิต
+                </h3>
+              </div>
+
+              <!-- Search Bar -->
+              <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+                <input type="text" id="searchItem" placeholder="ค้นหารายการผลผลิต..." oninput="filterButtons(this.value)" class="w-full bg-slate-900 border border-slate-700/80 focus:border-sky-500 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-200 outline-none transition">
+              </div>
+
+              <!-- Products Group Grid -->
+              <div id="groups-container" class="space-y-4 max-h-[360px] overflow-y-auto pr-1">
+                <!-- Dynamic Items Inserted via JS -->
+              </div>
+
+              <!-- Item Editor Form -->
+              <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-xl space-y-3">
+                <h4 class="text-xs font-semibold text-sky-400 flex items-center gap-1.5">
+                  <i class="fa-solid fa-circle-plus"></i> เพิ่มรายการผลผลิตใหม่
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                  <input type="text" id="newItemName" placeholder="ชื่อรายการสินค้า" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 outline-none">
+                  <input type="number" id="newItemPrice" placeholder="ราคาในฟาร์ม (บาท)" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 outline-none">
+                  <input type="number" id="newItemMarketPrice" placeholder="ราคากลางตลาด (บาท)" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 outline-none">
+                  
+                  <select id="newItemUnit" onchange="toggleCustomUnitInput(this.value)" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 outline-none">
+                    <option value="ลูก">หน่วย: ลูก</option>
+                    <option value="กก.">หน่วย: กก.</option>
+                    <option value="กระสอบ">หน่วย: กระสอบ</option>
+                    <option value="ตัว">หน่วย: ตัว</option>
+                    <option value="ฟอง">หน่วย: ฟอง</option>
+                    <option value="ถุง">หน่วย: ถุง</option>
+                    <option value="custom">-- ระบุหน่วยเอง --</option>
+                  </select>
+                </div>
+
+                <input type="text" id="customUnitName" placeholder="ระบุหน่วยนับเอง" class="hidden w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                  <select id="groupSelect" onchange="toggleNewGroupInput(this.value)" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 outline-none">
+                    <!-- Dynamic Options -->
+                  </select>
+                  <input type="text" id="newGroupName" placeholder="ชื่อหมวดหมู่ใหม่" class="hidden bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 outline-none">
+                </div>
+
+                <button onclick="addNewButton()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-medium py-2 rounded-lg text-xs transition">
+                  ➕ เพิ่มปุ่มรายการ
+                </button>
+                <p class="text-[10px] text-slate-500 text-center">* คลิกขวาที่ปุ่มสินค้าเพื่อลบรายการ</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Accounting Entry Form & History -->
+          <div class="lg:col-span-5 space-y-6">
+            
+            <!-- Entry Form -->
+            <div class="glass-card p-5 rounded-2xl shadow-lg space-y-4">
+              <h3 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-emerald-400"></i> บันทึกรายการทางการเงิน
+              </h3>
+
+              <div class="space-y-3 text-xs">
+                <div>
+                  <label class="text-slate-400 mb-1 block">วันที่ทำรายการ</label>
+                  <input type="date" id="expenseDate" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 outline-none">
+                </div>
+
+                <div>
+                  <label class="text-slate-400 mb-1 block">รายละเอียดรายการ</label>
+                  <input type="text" id="expenseDetail" placeholder="คลิกปุ่มสินค้า หรือพิมพ์เอง" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 outline-none">
+                </div>
+
+                <!-- Price Comparison Box -->
+                <div id="priceCompareBox" class="hidden bg-slate-900/80 border border-slate-800 p-3 rounded-xl justify-between text-xs">
+                  <div>🏡 ฟาร์ม: <strong id="farmPriceDisplay" class="text-emerald-400">0</strong> <span id="farmPriceUnit">บาท</span></div>
+                  <div>📊 ตลาด: <strong id="marketPriceDisplay" class="text-sky-400">0</strong> <span id="marketPriceUnit">บาท</span></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="text-slate-400 mb-1 block">ราคาจริง (<span id="unitPriceLabel">บาท</span>)</label>
+                    <input type="number" id="unitPrice" placeholder="0" oninput="calculateTotal()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 outline-none">
+                  </div>
+                  <div>
+                    <label class="text-slate-400 mb-1 block">จำนวน (<span id="unitQtyLabel">หน่วย</span>)</label>
+                    <input type="number" id="unitQuantity" placeholder="1" value="1" oninput="calculateTotal()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 outline-none">
+                  </div>
+                </div>
+
+                <div class="text-right pt-2 border-t border-slate-800">
+                  <span class="text-xs text-slate-400">ยอดรวมทั้งสิ้น:</span>
+                  <span id="displayTotal" class="text-xl font-extrabold text-amber-400 ml-2">0</span>
+                  <span class="text-xs text-slate-400">บาท</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                  <button onclick="addEntry('รายรับ')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-plus-circle"></i> รับเงิน
+                  </button>
+                  <button onclick="addEntry('รายจ่าย')" class="bg-rose-600 hover:bg-rose-500 text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-minus-circle"></i> จ่ายเงิน
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Transaction History -->
+            <div class="glass-card p-5 rounded-2xl shadow-lg space-y-3">
+              <div class="flex justify-between items-center">
+                <h3 class="text-xs font-semibold text-slate-300">ประวัติรายการล่าสุด</h3>
+                <button onclick="toggleHistoryLimit()" id="toggleHistoryBtn" class="text-[11px] text-sky-400 hover:underline">
+                  ดูทั้งหมด
+                </button>
+              </div>
+
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead class="text-slate-500 border-b border-slate-800">
+                    <tr>
+                      <th class="pb-2 font-normal">วันที่</th>
+                      <th class="pb-2 font-normal">รายการ</th>
+                      <th class="pb-2 font-normal text-right">จำนวนเงิน</th>
+                      <th class="pb-2 font-normal text-center">จัดการ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="historyBody" class="divide-y divide-slate-800/60 text-slate-300">
+                    <!-- History rows via JS -->
+                  </tbody>
+                </table>
+              </div>
+
+              <button onclick="clearAllData()" class="w-full text-xs bg-slate-800 hover:bg-slate-700 text-slate-400 py-2 rounded-xl transition mt-2">
+                <i class="fa-solid fa-trash-can mr-1"></i> ล้างข้อมูลบัญชีทั้งหมด
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- JAVASCRIPT APP LOGIC -->
+  <script>
+    // System Data State
+    const defaultProducts = [
+      { id: 1, name: 'ผักสลัดคอส', price: 40, marketPrice: 50, unit: 'กก.', group: 'แปลงผัก' },
+      { id: 2, name: 'ไข่ไก่อารมณ์ดี', price: 120, marketPrice: 135, unit: 'แผง', group: 'ปศุสัตว์' },
+      { id: 3, name: 'ปลาทับทิม', price: 80, marketPrice: 95, unit: 'ตัว', group: 'ประมง' }
+    ];
+
+    let products = JSON.parse(localStorage.getItem('lamay_products')) || defaultProducts;
+    let transactions = JSON.parse(localStorage.getItem('lamay_transactions')) || [];
+    let activeTab = 'dashboard';
+    let showAllHistory = false;
+
+    // Initialize App
+    window.onload = () => {
+      document.getElementById('expenseDate').valueAsDate = new Date();
+      checkAuthStatus();
+      renderProducts();
+      renderTransactions();
+      switchTab('dashboard');
+    };
+
+    // Auth Functions
+    function login() {
+      const name = document.getElementById('nameInput').value.trim();
+      const pass = document.getElementById('passInput').value.trim();
+
+      if (!name) return alert('กรุณากรอกชื่อผู้ใช้งาน');
+      if (pass !== '1234') return alert('รหัสผ่านไม่ถูกต้อง (ใช้อย่างเป็นทางการ: 1234)');
+
+      localStorage.setItem('lamay_user', name);
+      checkAuthStatus();
+    }
+
+    function logout() {
+      localStorage.removeItem('lamay_user');
+      checkAuthStatus();
+    }
+
+    function checkAuthStatus() {
+      const user = localStorage.getItem('lamay_user');
+      if (user) {
+        document.getElementById('login-page').classList.add('hidden');
+        document.getElementById('app-page').classList.remove('hidden');
+        document.getElementById('app-page').classList.add('flex');
+        document.getElementById('displayName').innerText = user;
+      } else {
+        document.getElementById('login-page').classList.remove('hidden');
+        document.getElementById('app-page').classList.add('hidden');
+        document.getElementById('app-page').classList.remove('flex');
+      }
+    }
+
+    // Switch Tab UI
+    function switchTab(tab) {
+      activeTab = tab;
+      const dashBtn = document.getElementById('tab-dashboard-btn');
+      const accBtn = document.getElementById('tab-account-btn');
+      const dashSec = document.getElementById('tab-dashboard');
+      const accSec = document.getElementById('tab-account');
+
+      if (tab === 'dashboard') {
+        dashSec.classList.remove('hidden');
+        accSec.classList.add('hidden');
+        dashBtn.className = 'px-4 py-2 text-xs font-semibold rounded-t-xl bg-slate-800 text-emerald-400 border-t border-x border-slate-700/60';
+        accBtn.className = 'px-4 py-2 text-xs font-medium rounded-t-xl text-slate-400 hover:text-slate-200 transition';
+      } else {
+        dashSec.classList.add('hidden');
+        accSec.classList.remove('hidden');
+        accBtn.className = 'px-4 py-2 text-xs font-semibold rounded-t-xl bg-slate-800 text-sky-400 border-t border-x border-slate-700/60';
+        dashBtn.className = 'px-4 py-2 text-xs font-medium rounded-t-xl text-slate-400 hover:text-slate-200 transition';
+      }
+    }
+
+    // IoT Switches
+    function toggleSwitch(id) {
+      const btn = document.getElementById(id);
+      const isON = btn.classList.contains('bg-emerald-600');
+      
+      if (isON) {
+        btn.className = 'bg-slate-700 hover:bg-slate-600 text-slate-300 px-4 py-1.5 rounded-lg text-xs font-semibold transition';
+        btn.innerText = 'ปิดอยู่';
+      } else {
+        btn.className = 'bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-1.5 rounded-lg text-xs font-semibold transition';
+        btn.innerText = 'เปิดอยู่';
+      }
+
+      // Append Log Entry
+      const logs = document.getElementById('systemLogs');
+      const now = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+      const deviceName = id === 'pumpBtn' ? 'ปั๊มน้ำระบบรดน้ำ' : 'ไฟส่องสว่างโซลาร์เซลล์';
+      const statusText = !isON ? 'เปิดทำงาน' : 'ปิดทำงาน';
+
+      const li = document.createElement('li');
+      li.className = 'flex justify-between border-b border-slate-800 pb-2';
+      li.innerHTML = `<span class="flex items-center gap-2"><i class="fa-solid fa-circle text-[6px] text-amber-400"></i> สั่งการ ${deviceName}: ${statusText}</span><span class="text-slate-500">${now} น.</span>`;
+      logs.prepend(li);
+    }
+
+    // Products Management
+    function renderProducts(filterKeyword = '') {
+      const container = document.getElementById('groups-container');
+      const groupSelect = document.getElementById('groupSelect');
+      container.innerHTML = '';
+      
+      const filtered = products.filter(p => p.name.toLowerCase().includes(filterKeyword.toLowerCase()));
+      const groups = [...new Set(products.map(p => p.group))];
+
+      // Update Group Options
+      groupSelect.innerHTML = groups.map(g => `<option value="${g}">กลุ่ม: ${g}</option>`).join('') + 
+                             `<option value="new_group">+ สร้างกลุ่มใหม่...</option>`;
+
+      groups.forEach(group => {
+        const groupItems = filtered.filter(p => p.group === group);
+        if (groupItems.length === 0) return;
+
+        const groupEl = document.createElement('div');
+        groupEl.className = 'space-y-2';
+        groupEl.innerHTML = `<h4 class="text-xs font-semibold text-slate-400 border-b border-slate-800 pb-1">📂 ${group}</h4>`;
+        
+        const grid = document.createElement('div');
+        grid.className = 'grid grid-cols-2 sm:grid-cols-3 gap-2';
+
+        groupItems.forEach(item => {
+          const btn = document.createElement('button');
+          btn.className = 'bg-slate-800/90 hover:bg-slate-700/80 border border-slate-700 p-2.5 rounded-xl text-left transition group relative overflow-hidden';
+          btn.onclick = () => selectProduct(item);
+          btn.oncontextmenu = (e) => { e.preventDefault(); deleteProduct(item.id); };
+
+          btn.innerHTML = `
+            <p class="text-xs font-semibold text-slate-200 group-hover:text-sky-400 transition truncate">${item.name}</p>
+            <p class="text-[10px] text-slate-400 mt-0.5">${item.price} ฿/${item.unit}</p>
+          `;
+          grid.appendChild(btn);
+        });
+
+        groupEl.appendChild(grid);
+        container.appendChild(groupEl);
+      });
+    }
+
+    function selectProduct(item) {
+      document.getElementById('expenseDetail').value = item.name;
+      document.getElementById('unitPrice').value = item.price;
+      document.getElementById('unitPriceLabel').innerText = `บาท/${item.unit}`;
+      document.getElementById('unitQtyLabel').innerText = item.unit;
+
+      // Price Compare Box
+      const compareBox = document.getElementById('priceCompareBox');
+      document.getElementById('farmPriceDisplay').innerText = item.price;
+      document.getElementById('marketPriceDisplay').innerText = item.marketPrice || '-';
+      document.getElementById('farmPriceUnit').innerText = `฿/${item.unit}`;
+      document.getElementById('marketPriceUnit').innerText = `฿/${item.unit}`;
+      compareBox.classList.remove('hidden');
+      compareBox.classList.add('flex');
+
+      calculateTotal();
+    }
+
+    function addNewButton() {
+      const name = document.getElementById('newItemName').value.trim();
+      const price = parseFloat(document.getElementById('newItemPrice').value);
+      const marketPrice = parseFloat(document.getElementById('newItemMarketPrice').value) || price;
+      
+      let unit = document.getElementById('newItemUnit').value;
+      if (unit === 'custom') unit = document.getElementById('customUnitName').value.trim() || 'หน่วย';
+
+      let group = document.getElementById('groupSelect').value;
+      if (group === 'new_group') group = document.getElementById('newGroupName').value.trim() || 'ทั่วไป';
+
+      if (!name || isNaN(price)) return alert('กรุณากรอกชื่อและราคาให้ถูกต้อง');
+
+      const newItem = { id: Date.now(), name, price, marketPrice, unit, group };
+      products.push(newItem);
+      localStorage.setItem('lamay_products', JSON.stringify(products));
+
+      // Reset Inputs
+      document.getElementById('newItemName').value = '';
+      document.getElementById('newItemPrice').value = '';
+      document.getElementById('newItemMarketPrice').value = '';
+
+      renderProducts();
+    }
+
+    function deleteProduct(id) {
+      if (confirm('ต้องการลบรายการสินค้านี้ใช่หรือไม่?')) {
+        products = products.filter(p => p.id !== id);
+        localStorage.setItem('lamay_products', JSON.stringify(products));
+        renderProducts();
+      }
+    }
+
+    function filterButtons(val) {
+      renderProducts(val);
+    }
+
+    function toggleCustomUnitInput(val) {
+      const input = document.getElementById('customUnitName');
+      if (val === 'custom') input.classList.remove('hidden');
+      else input.classList.add('hidden');
+    }
+
+    function toggleNewGroupInput(val) {
+      const input = document.getElementById('newGroupName');
+      if (val === 'new_group') input.classList.remove('hidden');
+      else input.classList.add('hidden');
+    }
+
+    // Transactions Accounting Logic
+    function calculateTotal() {
+      const price = parseFloat(document.getElementById('unitPrice').value) || 0;
+      const qty = parseFloat(document.getElementById('unitQuantity').value) || 0;
+      document.getElementById('displayTotal').innerText = (price * qty).toLocaleString();
+    }
+
+    function addEntry(type) {
+      const date = document.getElementById('expenseDate').value;
+      const detail = document.getElementById('expenseDetail').value.trim();
+      const price = parseFloat(document.getElementById('unitPrice').value) || 0;
+      const qty = parseFloat(document.getElementById('unitQuantity').value) || 1;
+      const total = price * qty;
+
+      if (!detail || total <= 0) return alert('กรุณาระบุรายละเอียดและจำนวนเงิน');
+
+      const entry = { id: Date.now(), date, detail, type, amount: total };
+      transactions.unshift(entry);
+      localStorage.setItem('lamay_transactions', JSON.stringify(transactions));
+
+      // Reset Form
+      document.getElementById('expenseDetail').value = '';
+      document.getElementById('unitPrice').value = '';
+      document.getElementById('unitQuantity').value = '1';
+      document.getElementById('displayTotal').innerText = '0';
+      document.getElementById('priceCompareBox').classList.add('hidden');
+
+      renderTransactions();
+    }
+
+    function deleteTransaction(id) {
+      transactions = transactions.filter(t => t.id !== id);
+      localStorage.setItem('lamay_transactions', JSON.stringify(transactions));
+      renderTransactions();
+    }
+
+    function clearAllData() {
+      if (confirm('คุณแน่ใจหรือว่าต้องการล้างข้อมูลประวัติทางการเงินทั้งหมด?')) {
+        transactions = [];
+        localStorage.removeItem('lamay_transactions');
+        renderTransactions();
+      }
+    }
+
+    function toggleHistoryLimit() {
+      showAllHistory = !showAllHistory;
+      document.getElementById('toggleHistoryBtn').innerText = showAllHistory ? 'ย่อประวัติ' : 'ดูทั้งหมด';
+      renderTransactions();
+    }
+
+    function renderTransactions() {
+      const tbody = document.getElementById('historyBody');
+      tbody.innerHTML = '';
+
+      let income = 0;
+      let expense = 0;
+
+      transactions.forEach(t => {
+        if (t.type === 'รายรับ') income += t.amount;
+        else expense += t.amount;
+      });
+
+      document.getElementById('totalIncome').innerText = income.toLocaleString();
+      document.getElementById('totalExpense').innerText = expense.toLocaleString();
+      document.getElementById('netBalance').innerText = (income - expense).toLocaleString();
+
+      const displayList = showAllHistory ? transactions : transactions.slice(0, 5);
+
+      if (displayList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-slate-500">ยังไม่มีรายการบันทึก</td></tr>`;
+        return;
+      }
+
+      displayList.forEach(t => {
+        const isIncome = t.type === 'รายรับ';
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-800/40 transition';
+        tr.innerHTML = `
+          <td class="py-2.5 text-slate-400 text-[11px]">${t.date}</td>
+          <td class="py-2.5 font-medium">${t.detail}</td>
+          <td class="py-2.5 text-right font-bold ${isIncome ? 'text-emerald-400' : 'text-rose-400'}">
+            ${isIncome ? '+' : '-'}${t.amount.toLocaleString()}
+          </td>
+          <td class="py-2.5 text-center">
+            <button onclick="deleteTransaction(${t.id})" class="text-slate-500 hover:text-rose-400 transition">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+  </script>
 </body>
-    </html>
-
+</html>
