@@ -13,20 +13,31 @@ export default function App() {
 
   useEffect(() => {
     // ตรวจสอบข้อมูลการเข้าสู่ระบบจาก LocalStorage
-    const savedUser = localStorage.getItem('lamai_user');
+    const savedUser = localStorage.getItem('lamay_user');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (e) {
+        // เผื่อกรณีเก็บเป็น String ธรรมดา
+        setUser({ email: savedUser, role: 'owner' });
+      }
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('lamai_user');
+    localStorage.removeItem('lamay_user');
+    localStorage.removeItem('isLoggedIn');
     setUser(null);
   };
 
   // หากยังไม่เข้าสู่ระบบ ให้แสดงหน้า Login
   if (!user) {
-    return <Login onLoginSuccess={(userData) => setUser(userData)} />;
+    return <Login onLoginSuccess={(userData) => {
+      // รองรับทั้งแบบส่ง string หรือ object กลับมา
+      const userObj = typeof userData === 'object' ? userData : { email: userData, role: 'owner' };
+      setUser(userObj);
+      localStorage.setItem('lamay_user', JSON.stringify(userObj));
+    }} />;
   }
 
   return (
@@ -34,10 +45,12 @@ export default function App() {
       {/* ส่วนหัวแอป */}
       <header className="bg-green-700 text-white p-4 flex justify-between items-center shadow-md">
         <div>
-          <h1 className="font-bold text-lg">🌱 ละม้ายฟาร์ม</h1>
-          <p className="text-xs text-green-200">ผู้ใช้งาน: {user.email} ({user.role === 'owner' ? 'เจ้าของฟาร์ม' : 'ทีมงาน'})</p>
+          <h1 className="font-bold text-lg">🌱 ไร่ละไม</h1>
+          <p className="text-xs text-green-200">
+            ผู้ใช้งาน: {user.email || user} ({user.role === 'worker' ? 'ทีมงาน' : 'เจ้าของฟาร์ม'})
+          </p>
         </div>
-        <button 
+        <button
           onClick={handleLogout}
           className="text-xs bg-green-800 hover:bg-green-900 px-3 py-1.5 rounded-lg transition-all"
         >
@@ -55,37 +68,37 @@ export default function App() {
       </main>
 
       {/* เมนูด้านล่าง (Bottom Navigation Bar) */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around p-2 shadow-lg">
-        <button 
-          onClick={() => setCurrentTab('dashboard')} 
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around p-2 shadow-lg z-50">
+        <button
+          onClick={() => setCurrentTab('dashboard')}
           className={`flex flex-col items-center text-xs ${currentTab === 'dashboard' ? 'text-green-700 font-bold' : 'text-gray-400'}`}
         >
           <span>🏠</span>
           <span>หน้าแรก</span>
         </button>
-        <button 
-          onClick={() => setCurrentTab('accounting')} 
+        <button
+          onClick={() => setCurrentTab('accounting')}
           className={`flex flex-col items-center text-xs ${currentTab === 'accounting' ? 'text-green-700 font-bold' : 'text-gray-400'}`}
         >
           <span>💰</span>
           <span>บัญชี</span>
         </button>
-        <button 
-          onClick={() => setCurrentTab('inventory')} 
+        <button
+          onClick={() => setCurrentTab('inventory')}
           className={`flex flex-col items-center text-xs ${currentTab === 'inventory' ? 'text-green-700 font-bold' : 'text-gray-400'}`}
         >
           <span>📦</span>
-          <span>สต๊อก</span>
+          <span>สต็อก</span>
         </button>
-        <button 
-          onClick={() => setCurrentTab('aiDoctor')} 
+        <button
+          onClick={() => setCurrentTab('aiDoctor')}
           className={`flex flex-col items-center text-xs ${currentTab === 'aiDoctor' ? 'text-green-700 font-bold' : 'text-gray-400'}`}
         >
           <span>🌿</span>
           <span>AI คลินิก</span>
         </button>
-        <button 
-          onClick={() => setCurrentTab('farmMap')} 
+        <button
+          onClick={() => setCurrentTab('farmMap')}
           className={`flex flex-col items-center text-xs ${currentTab === 'farmMap' ? 'text-green-700 font-bold' : 'text-gray-400'}`}
         >
           <span>🗺️</span>

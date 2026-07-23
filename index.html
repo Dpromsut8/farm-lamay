@@ -479,207 +479,214 @@
       logs.prepend(li);
     }
 
-    // Products Management
-    function renderProducts(filterKeyword = '') {
-      const container = document.getElementById('groups-container');
-      const groupSelect = document.getElementById('groupSelect');
-      container.innerHTML = '';
-      
-      const filtered = products.filter(p => p.name.toLowerCase().includes(filterKeyword.toLowerCase()));
-      const groups = [...new Set(products.map(p => p.group))];
+    // // Products Management
+function renderProducts(filterKeyword = '') {
+    const container = document.getElementById('groups-container');
+    const groupSelect = document.getElementById('groupSelect');
+    if (!container || !groupSelect) return;
+    
+    container.innerHTML = '';
+    
+    const filtered = products.filter(p => p.name.toLowerCase().includes(filterKeyword.toLowerCase()));
+    const groups = [...new Set(products.map(p => p.group))];
 
-      // Update Group Options
-      groupSelect.innerHTML = groups.map(g => `<option value="${g}">กลุ่ม: ${g}</option>`).join('') + 
-                             `<option value="new_group">+ สร้างกลุ่มใหม่...</option>`;
+    // Update Group Options
+    groupSelect.innerHTML = groups.map(g => `<option value="${g}">กลุ่ม: ${g}</option>`).join('') +
+        `<option value="new_group">สร้างกลุ่มใหม่...</option>`;
 
-      groups.forEach(group => {
+    groups.forEach(group => {
         const groupItems = filtered.filter(p => p.group === group);
         if (groupItems.length === 0) return;
 
         const groupEl = document.createElement('div');
         groupEl.className = 'space-y-2';
-        groupEl.innerHTML = `<h4 class="text-xs font-semibold text-slate-400 border-b border-slate-800 pb-1">📂 ${group}</h4>`;
+        groupEl.innerHTML = `<h4 class="text-xs font-semibold text-slate-400 border-b border-slate-800 pb-1">📁 ${group}</h4>`;
         
         const grid = document.createElement('div');
         grid.className = 'grid grid-cols-2 sm:grid-cols-3 gap-2';
 
         groupItems.forEach(item => {
-          const btn = document.createElement('button');
-          btn.className = 'bg-slate-800/90 hover:bg-slate-700/80 border border-slate-700 p-2.5 rounded-xl text-left transition group relative overflow-hidden';
-          btn.onclick = () => selectProduct(item);
-          btn.oncontextmenu = (e) => { e.preventDefault(); deleteProduct(item.id); };
+            const btn = document.createElement('button');
+            btn.className = 'bg-slate-800/90 hover:bg-slate-700/80 border border-slate-700 p-2.5 rounded-xl text-left transition group relative overflow-hidden';
+            btn.onclick = () => selectProduct(item);
+            btn.oncontextmenu = (e) => {
+                e.preventDefault();
+                deleteProduct(item.id);
+            };
 
-          btn.innerHTML = `
-            <p class="text-xs font-semibold text-slate-200 group-hover:text-sky-400 transition truncate">${item.name}</p>
-            <p class="text-[10px] text-slate-400 mt-0.5">${item.price} ฿/${item.unit}</p>
-          `;
-          grid.appendChild(btn);
+            btn.innerHTML = `
+                <p class="text-xs font-semibold text-slate-200 group-hover:text-sky-400 transition truncate">${item.name}</p>
+                <p class="text-[10px] text-slate-400 mt-0.5">${item.price} ฿/${item.unit}</p>
+            `;
+            grid.appendChild(btn);
         });
 
         groupEl.appendChild(grid);
         container.appendChild(groupEl);
-      });
-    }
+    });
+}
 
-    function selectProduct(item) {
-      document.getElementById('expenseDetail').value = item.name;
-      document.getElementById('unitPrice').value = item.price;
-      document.getElementById('unitPriceLabel').innerText = `บาท/${item.unit}`;
-      document.getElementById('unitQtyLabel').innerText = item.unit;
+function selectProduct(item) {
+    document.getElementById('expenseDetail').value = item.name;
+    document.getElementById('unitPrice').value = item.price;
+    document.getElementById('unitPriceLabel').innerText = `บาท/${item.unit}`;
+    document.getElementById('unitQtyLabel').innerText = item.unit;
 
-      // Price Compare Box
-      const compareBox = document.getElementById('priceCompareBox');
-      document.getElementById('farmPriceDisplay').innerText = item.price;
-      document.getElementById('marketPriceDisplay').innerText = item.marketPrice || '-';
-      document.getElementById('farmPriceUnit').innerText = `฿/${item.unit}`;
-      document.getElementById('marketPriceUnit').innerText = `฿/${item.unit}`;
-      compareBox.classList.remove('hidden');
-      compareBox.classList.add('flex');
+    // Price Compare Box
+    const compareBox = document.getElementById('priceCompareBox');
+    document.getElementById('farmPriceDisplay').innerText = item.price;
+    document.getElementById('marketPriceDisplay').innerText = item.marketPrice || '-';
+    document.getElementById('farmPriceUnit').innerText = `฿/${item.unit}`;
+    document.getElementById('marketPriceUnit').innerText = `฿/${item.unit}`;
 
-      calculateTotal();
-    }
+    compareBox.classList.remove('hidden');
+    compareBox.classList.add('flex');
 
-    function addNewButton() {
-      const name = document.getElementById('newItemName').value.trim();
-      const price = parseFloat(document.getElementById('newItemPrice').value);
-      const marketPrice = parseFloat(document.getElementById('newItemMarketPrice').value) || price;
-      
-      let unit = document.getElementById('newItemUnit').value;
-      if (unit === 'custom') unit = document.getElementById('customUnitName').value.trim() || 'หน่วย';
+    calculateTotal();
+}
 
-      let group = document.getElementById('groupSelect').value;
-      if (group === 'new_group') group = document.getElementById('newGroupName').value.trim() || 'ทั่วไป';
+function addNewButton() {
+    const name = document.getElementById('newItemName').value.trim();
+    const price = parseFloat(document.getElementById('newItemPrice').value);
+    const marketPrice = parseFloat(document.getElementById('newItemMarketPrice').value) || price;
 
-      if (!name || isNaN(price)) return alert('กรุณากรอกชื่อและราคาให้ถูกต้อง');
+    let unit = document.getElementById('newItemUnit').value;
+    if (unit === 'custom') unit = document.getElementById('customUnitName').value.trim() || 'หน่วย';
 
-      const newItem = { id: Date.now(), name, price, marketPrice, unit, group };
-      products.push(newItem);
-      localStorage.setItem('lamay_products', JSON.stringify(products));
+    let group = document.getElementById('groupSelect').value;
+    if (group === 'new_group') group = document.getElementById('newGroupName').value.trim() || 'ทั่วไป';
 
-      // Reset Inputs
-      document.getElementById('newItemName').value = '';
-      document.getElementById('newItemPrice').value = '';
-      document.getElementById('newItemMarketPrice').value = '';
+    if (!name || isNaN(price)) return alert('กรุณากรอกชื่อและราคาให้ถูกต้อง');
 
-      renderProducts();
-    }
+    const newItem = { id: Date.now(), name, price, marketPrice, unit, group };
+    products.push(newItem);
+    localStorage.setItem('lamay_products', JSON.stringify(products));
 
-    function deleteProduct(id) {
-      if (confirm('ต้องการลบรายการสินค้านี้ใช่หรือไม่?')) {
+    // Reset Inputs
+    document.getElementById('newItemName').value = '';
+    document.getElementById('newItemPrice').value = '';
+    document.getElementById('newItemMarketPrice').value = '';
+
+    renderProducts();
+}
+
+function deleteProduct(id) {
+    if (confirm('ต้องการลบรายการสินค้านี้ใช่หรือไม่?')) {
         products = products.filter(p => p.id !== id);
         localStorage.setItem('lamay_products', JSON.stringify(products));
         renderProducts();
-      }
     }
+}
 
-    function filterButtons(val) {
-      renderProducts(val);
-    }
+function filterButtons(val) {
+    renderProducts(val);
+}
 
-    function toggleCustomUnitInput(val) {
-      const input = document.getElementById('customUnitName');
-      if (val === 'custom') input.classList.remove('hidden');
-      else input.classList.add('hidden');
-    }
+function toggleCustomUnitInput(val) {
+    const input = document.getElementById('customUnitName');
+    if (val === 'custom') input.classList.remove('hidden');
+    else input.classList.add('hidden');
+}
 
-    function toggleNewGroupInput(val) {
-      const input = document.getElementById('newGroupName');
-      if (val === 'new_group') input.classList.remove('hidden');
-      else input.classList.add('hidden');
-    }
+function toggleNewGroupInput(val) {
+    const input = document.getElementById('newGroupName');
+    if (val === 'new_group') input.classList.remove('hidden');
+    else input.classList.add('hidden');
+}
+// // Transactions Accounting Logic
+function calculateTotal() {
+    const price = parseFloat(document.getElementById('unitPrice').value) || 0;
+    const qty = parseFloat(document.getElementById('unitQuantity').value) || 0;
+    document.getElementById('displayTotal').innerText = (price * qty).toLocaleString();
+}
 
-    // Transactions Accounting Logic
-    function calculateTotal() {
-      const price = parseFloat(document.getElementById('unitPrice').value) || 0;
-      const qty = parseFloat(document.getElementById('unitQuantity').value) || 0;
-      document.getElementById('displayTotal').innerText = (price * qty).toLocaleString();
-    }
+function addEntry(type) {
+    const date = document.getElementById('expenseDate').value;
+    const detail = document.getElementById('expenseDetail').value.trim();
+    const price = parseFloat(document.getElementById('unitPrice').value) || 0;
+    const qty = parseFloat(document.getElementById('unitQuantity').value) || 1;
+    const total = price * qty;
 
-    function addEntry(type) {
-      const date = document.getElementById('expenseDate').value;
-      const detail = document.getElementById('expenseDetail').value.trim();
-      const price = parseFloat(document.getElementById('unitPrice').value) || 0;
-      const qty = parseFloat(document.getElementById('unitQuantity').value) || 1;
-      const total = price * qty;
+    if (!detail || total <= 0) return alert('กรุณาระบุรายละเอียดและจำนวนเงิน');
 
-      if (!detail || total <= 0) return alert('กรุณาระบุรายละเอียดและจำนวนเงิน');
+    const entry = { id: Date.now(), date, detail, type, amount: total };
+    transactions.unshift(entry);
+    localStorage.setItem('lamay_transactions', JSON.stringify(transactions));
 
-      const entry = { id: Date.now(), date, detail, type, amount: total };
-      transactions.unshift(entry);
-      localStorage.setItem('lamay_transactions', JSON.stringify(transactions));
+    // Reset Form
+    document.getElementById('expenseDetail').value = '';
+    document.getElementById('unitPrice').value = '';
+    document.getElementById('unitQuantity').value = '1';
+    document.getElementById('displayTotal').innerText = '0';
+    document.getElementById('priceCompareBox').classList.add('hidden');
 
-      // Reset Form
-      document.getElementById('expenseDetail').value = '';
-      document.getElementById('unitPrice').value = '';
-      document.getElementById('unitQuantity').value = '1';
-      document.getElementById('displayTotal').innerText = '0';
-      document.getElementById('priceCompareBox').classList.add('hidden');
+    renderTransactions();
+}
 
-      renderTransactions();
-    }
+function deleteTransaction(id) {
+    transactions = transactions.filter(t => t.id !== id);
+    localStorage.setItem('lamay_transactions', JSON.stringify(transactions));
+    renderTransactions();
+}
 
-    function deleteTransaction(id) {
-      transactions = transactions.filter(t => t.id !== id);
-      localStorage.setItem('lamay_transactions', JSON.stringify(transactions));
-      renderTransactions();
-    }
-
-    function clearAllData() {
-      if (confirm('คุณแน่ใจหรือว่าต้องการล้างข้อมูลประวัติทางการเงินทั้งหมด?')) {
+function clearAllData() {
+    if (confirm('คุณแน่ใจหรือไม่ว่าต้องการล้างประวัติทางการเงินทั้งหมด?')) {
         transactions = [];
         localStorage.removeItem('lamay_transactions');
         renderTransactions();
-      }
     }
+}
 
-    function toggleHistoryLimit() {
-      showAllHistory = !showAllHistory;
-      document.getElementById('toggleHistoryBtn').innerText = showAllHistory ? 'ย่อประวัติ' : 'ดูทั้งหมด';
-      renderTransactions();
-    }
+function toggleHistoryLimit() {
+    showAllHistory = !showAllHistory;
+    document.getElementById('toggleHistoryBtn').innerText = showAllHistory ? 'ย่อประวัติ' : 'ดูทั้งหมด';
+    renderTransactions();
+}
 
-    function renderTransactions() {
-      const tbody = document.getElementById('historyBody');
-      tbody.innerHTML = '';
+function renderTransactions() {
+    const tbody = document.getElementById('historyBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
 
-      let income = 0;
-      let expense = 0;
+    let income = 0;
+    let expense = 0;
 
-      transactions.forEach(t => {
+    transactions.forEach(t => {
         if (t.type === 'รายรับ') income += t.amount;
         else expense += t.amount;
-      });
+    });
 
-      document.getElementById('totalIncome').innerText = income.toLocaleString();
-      document.getElementById('totalExpense').innerText = expense.toLocaleString();
-      document.getElementById('netBalance').innerText = (income - expense).toLocaleString();
+    document.getElementById('totalIncome').innerText = income.toLocaleString();
+    document.getElementById('totalExpense').innerText = expense.toLocaleString();
+    document.getElementById('netBalance').innerText = (income - expense).toLocaleString();
 
-      const displayList = showAllHistory ? transactions : transactions.slice(0, 5);
+    const displayList = showAllHistory ? transactions : transactions.slice(0, 5);
 
-      if (displayList.length === 0) {
+    if (displayList.length === 0) {
         tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-slate-500">ยังไม่มีรายการบันทึก</td></tr>`;
         return;
-      }
+    }
 
-      displayList.forEach(t => {
+    displayList.forEach(t => {
         const isIncome = t.type === 'รายรับ';
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-800/40 transition';
         tr.innerHTML = `
-          <td class="py-2.5 text-slate-400 text-[11px]">${t.date}</td>
-          <td class="py-2.5 font-medium">${t.detail}</td>
-          <td class="py-2.5 text-right font-bold ${isIncome ? 'text-emerald-400' : 'text-rose-400'}">
-            ${isIncome ? '+' : '-'}${t.amount.toLocaleString()}
-          </td>
-          <td class="py-2.5 text-center">
-            <button onclick="deleteTransaction(${t.id})" class="text-slate-500 hover:text-rose-400 transition">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
-          </td>
+            <td class="py-2.5 text-slate-400 text-[11px]">${t.date}</td>
+            <td class="py-2.5 font-medium">${t.detail}</td>
+            <td class="py-2.5 text-right font-bold ${isIncome ? 'text-emerald-400' : 'text-rose-400'}">
+                ${isIncome ? '+' : '-'}${t.amount.toLocaleString()}
+            </td>
+            <td class="py-2.5 text-center">
+                <button onclick="deleteTransaction(${t.id})" class="text-slate-500 hover:text-rose-400 transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </td>
         `;
         tbody.appendChild(tr);
-      });
-    }
+    });
+}
+
   </script>
 </body>
 </html>
