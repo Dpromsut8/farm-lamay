@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import './Login.css';
 
-export default function Login({ onLoginSuccess, onNavigateToRegister }) {
+export default function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -11,11 +10,12 @@ export default function Login({ onLoginSuccess, onNavigateToRegister }) {
       alert('กรุณากรอกชื่อผู้ใช้งานและรหัสผ่าน');
       return;
     }
+    // จำลองข้อมูลเข้าสู่ระบบสำเร็จ
     onLoginSuccess({ email: username, role: 'owner' });
   };
 
   return (
-    <div className="login-container" style={{
+    <div style={{
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
@@ -24,7 +24,7 @@ export default function Login({ onLoginSuccess, onNavigateToRegister }) {
       fontFamily: 'Kanit, sans-serif',
       padding: '20px'
     }}>
-      <div className="login-card" style={{
+      <div style={{
         background: '#1e293b',
         width: '100%',
         maxWidth: '400px',
@@ -49,7 +49,7 @@ export default function Login({ onLoginSuccess, onNavigateToRegister }) {
           🌿
         </div>
 
-        {/* ชื่อแบรนด์ออกแบบใหม่ */}
+        {/* ชื่อแบรนด์ออกแบบใหม่พรีเมียม */}
         <h1 style={{
           fontSize: '28px',
           color: '#ffffff',
@@ -63,12 +63,12 @@ export default function Login({ onLoginSuccess, onNavigateToRegister }) {
         }}>
           FARM LAMAY
         </h1>
-        <p style={{ fontSize: '13px', color: '#94a3b8', margin: '0 ot 25px 0' }}>
+        <p style={{ fontSize: '13px', color: '#94a3b8', margin: '0 0 25px 0' }}>
           ระบบบริหารจัดการฟาร์มอัจฉริยะ
         </p>
 
         {/* ฟอร์มเข้าสู่ระบบ */}
-        <form onSubmit={handleLogin} style={{ textAlign: 'left', marginTop: '20px' }}>
+        <form onSubmit={handleLogin} style={{ textAlign: 'left' }}>
           <div style={{ marginBottom: '15px' }}>
             <label style={{ display: 'block', fontSize: '13px', color: '#cbd5e1', marginBottom: '5px' }}>
               ชื่อผู้ใช้งาน
@@ -123,8 +123,7 @@ export default function Login({ onLoginSuccess, onNavigateToRegister }) {
             fontSize: '16px',
             fontWeight: '600',
             cursor: 'pointer',
-            boxShadow: '0 4px 12px rgba(16, 185, 129, 0.4)',
-            transition: 'opacity 0.2s'
+            boxShadow: '0 4px 12px rgba(16, 185, 129, 0.4)'
           }}>
             🔐 เข้าสู่ระบบ
           </button>
@@ -137,7 +136,7 @@ export default function Login({ onLoginSuccess, onNavigateToRegister }) {
           </p>
           <button 
             type="button" 
-            onClick={() => onNavigateToRegister ? onNavigateToRegister() : alert('เปิดหน้าสมัครสมาชิก')}
+            onClick={() => alert('ฟังก์ชันสมัครสมาชิก')}
             style={{
               width: '100%',
               padding: '10px',
