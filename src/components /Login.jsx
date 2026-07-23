@@ -2,133 +2,156 @@ import React, { useState } from 'react';
 import './Login.css';
 
 export default function Login({ onLoginSuccess, onNavigateToRegister }) {
-  const [identifier, setIdentifier] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [usePinMode, setUsePinMode] = useState(false);
-  const [pin, setPin] = useState('');
 
-  // จำลองการเข้าสู่ระบบแบบ Traditional / PIN
   const handleLogin = (e) => {
     e.preventDefault();
-    if (usePinMode) {
-      if (pin.length < 4) {
-        alert('กรุณากรอกรหัส PIN ให้ครบ 4-6 หลัก');
-        return;
-      }
-      onLoginSuccess({ username: 'User (PIN Auth)' });
-    } else {
-      if (!identifier || !password) {
-        alert('กรุณากรอกอีเมล/เบอร์โทร และรหัสผ่าน');
-        return;
-      }
-      // หลังบ้านจะทำการตรวจสอบผ่าน Hashing (bcrypt/Argon2)
-      onLoginSuccess({ username: identifier });
+    if (!username || !password) {
+      alert('กรุณากรอกชื่อผู้ใช้งานและรหัสผ่าน');
+      return;
     }
-  };
-
-  // จำลองการเข้าสู่ระบบด้วย Biometric (สแกนนิ้ว/ใบหน้า)
-  const handleBiometricLogin = () => {
-    alert('ระบบสแกนลายนิ้วมือ/ใบหน้าสำเร็จ (Fast Authentication)');
-    onLoginSuccess({ username: 'Biometric User' });
+    onLoginSuccess({ email: username, role: 'owner' });
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
+    <div className="login-container" style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '100vh',
+      background: '#0f172a',
+      fontFamily: 'Kanit, sans-serif',
+      padding: '20px'
+    }}>
+      <div className="login-card" style={{
+        background: '#1e293b',
+        width: '100%',
+        maxWidth: '400px',
+        padding: '30px',
+        borderRadius: '20px',
+        boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+        textAlign: 'center',
+        border: '1px solid #334155'
+      }}>
         
-        {/* โลโก้แบรนด์ */}
-        <div className="brand-logo-container">
-          <div className="farm-icon">🌿</div>
-          <h1 className="brand-title">FARM LAMAY</h1>
-          <p className="brand-subtitle">ระบบบริหารจัดการฟาร์มอัจฉริยะ</p>
+        {/* โลโก้ไอคอน */}
+        <div style={{
+          fontSize: '32px',
+          background: 'linear-gradient(135deg, #10b981, #059669)',
+          width: '70px',
+          height: '70px',
+          lineHeight: '70px',
+          borderRadius: '50%',
+          margin: '0 auto 15px',
+          boxShadow: '0 4px 10px rgba(16, 185, 129, 0.3)'
+        }}>
+          🌿
         </div>
 
-        {/* ปุ่มสลับไปใช้ Biometric ด่วน */}
-        <button type="button" className="biometric-login-btn" onClick={handleBiometricLogin}>
-          🔐 เข้าสู่ระบบด้วยสแกนนิ้ว / Face ID
-        </button>
+        {/* ชื่อแบรนด์ออกแบบใหม่ */}
+        <h1 style={{
+          fontSize: '28px',
+          color: '#ffffff',
+          fontWeight: '800',
+          margin: '0 0 5px 0',
+          letterSpacing: '2px',
+          textTransform: 'uppercase',
+          background: 'linear-gradient(90deg, #34d399, #6ee7b7)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent'
+        }}>
+          FARM LAMAY
+        </h1>
+        <p style={{ fontSize: '13px', color: '#94a3b8', margin: '0 ot 25px 0' }}>
+          ระบบบริหารจัดการฟาร์มอัจฉริยะ
+        </p>
 
-        <form onSubmit={handleLogin} className="login-form">
-          {!usePinMode ? (
-            <>
-              <div className="input-group">
-                <label>อีเมล หรือ เบอร์โทรศัพท์</label>
-                <input 
-                  type="text" 
-                  placeholder="name@email.com หรือ 0812345678" 
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                />
-              </div>
+        {/* ฟอร์มเข้าสู่ระบบ */}
+        <form onSubmit={handleLogin} style={{ textAlign: 'left', marginTop: '20px' }}>
+          <div style={{ marginBottom: '15px' }}>
+            <label style={{ display: 'block', fontSize: '13px', color: '#cbd5e1', marginBottom: '5px' }}>
+              ชื่อผู้ใช้งาน
+            </label>
+            <input 
+              type="text" 
+              placeholder="กรอกชื่อของคุณ" 
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px',
+                background: '#0f172a',
+                border: '1px solid #475569',
+                borderRadius: '10px',
+                color: '#fff',
+                fontSize: '14px',
+                boxSizing: 'border-box'
+              }}
+            />
+          </div>
 
-              <div className="input-group">
-                <label>รหัสผ่าน (อย่างน้อย 8 ตัวอักษร)</label>
-                <input 
-                  type="password" 
-                  placeholder="••••••••" 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', fontSize: '13px', color: '#cbd5e1', marginBottom: '5px' }}>
+              รหัสผ่าน
+            </label>
+            <input 
+              type="password" 
+              placeholder="รหัสผ่าน (เช่น 1234)" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px',
+                background: '#0f172a',
+                border: '1px solid #475569',
+                borderRadius: '10px',
+                color: '#fff',
+                fontSize: '14px',
+                boxSizing: 'border-box'
+              }}
+            />
+          </div>
 
-              <div className="form-actions">
-                <span 
-                  className="link-text" 
-                  style={{ fontSize: '12px' }} 
-                  onClick={() => setUsePinMode(true)}
-                >
-                  ใช้รหัส PIN 4 หลักแทน?
-                </span>
-                <div className="forgot-password">
-                  <a href="#forgot" onClick={(e) => { e.preventDefault(); alert('ส่งลิงก์กู้คืนรหัสผ่านไปยังอีเมลเรียบร้อยแล้ว'); }}>
-                    ลืมรหัสผ่าน?
-                  </a>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="input-group">
-              <label>กรอกรหัส PIN (4-6 หลัก)</label>
-              <input 
-                type="password" 
-                maxLength={6}
-                placeholder="• • • •" 
-                style={{ textAlign: 'center', fontSize: '20px', letterSpacing: '8px' }}
-                value={pin}
-                onChange={(e) => setPin(e.target.value)}
-              />
-              <div className="form-actions" style={{ marginTop: '10px' }}>
-                <span 
-                  className="link-text" 
-                  style={{ fontSize: '12px' }} 
-                  onClick={() => setUsePinMode(false)}
-                >
-                  กลับไปใช้รหัสผ่านปกติ
-                </span>
-              </div>
-            </div>
-          )}
-
-          <button type="submit" className="btn-primary">
-            {usePinMode ? 'ยืนยันรหัส PIN' : 'เข้าสู่ระบบ'}
+          <button type="submit" style={{
+            width: '100%',
+            padding: '12px',
+            background: 'linear-gradient(135deg, #10b981, #059669)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '10px',
+            fontSize: '16px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            boxShadow: '0 4px 12px rgba(16, 185, 129, 0.4)',
+            transition: 'opacity 0.2s'
+          }}>
+            🔐 เข้าสู่ระบบ
           </button>
         </form>
 
-        <div className="divider">
-          <span>หรือเข้าสู่ระบบผ่านโซเชียล</span>
-        </div>
-
-        {/* Social Login 4 ช่องทาง */}
-        <div className="social-login-grid">
-          <button className="btn-social" onClick={() => alert('เชื่อมต่อ Google Login')}>🌐 Google</button>
-          <button className="btn-social" onClick={() => alert('เชื่อมต่อ LINE Login')}>💬 LINE</button>
-          <button className="btn-social" onClick={() => alert('เชื่อมต่อ Facebook Login')}>📘 Facebook</button>
-          <button className="btn-social" onClick={() => alert('เชื่อมต่อ Apple ID')}>🍎 Apple ID</button>
-        </div>
-
-        {/* ลิงก์ไปหน้าลงทะเบียนใหม่ */}
-        <div className="register-redirect">
-          <p>ผู้ใช้ใหม่? <span onClick={onNavigateToRegister} className="link-text">ลงทะเบียนที่นี่</span></p>
+        {/* ปุ่มสมัครสมาชิกด้านล่าง */}
+        <div style={{ marginTop: '25px', borderTop: '1px solid #334155', paddingTop: '20px' }}>
+          <p style={{ fontSize: '13px', color: '#94a3b8', margin: '0 0 10px 0' }}>
+            ยังไม่มีบัญชีผู้ใช้งาน?
+          </p>
+          <button 
+            type="button" 
+            onClick={() => onNavigateToRegister ? onNavigateToRegister() : alert('เปิดหน้าสมัครสมาชิก')}
+            style={{
+              width: '100%',
+              padding: '10px',
+              background: 'transparent',
+              color: '#34d399',
+              border: '1px dashed #34d399',
+              borderRadius: '10px',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: 'pointer'
+            }}
+          >
+            📝 สมัครสมาชิกใหม่
+          </button>
         </div>
 
       </div>
